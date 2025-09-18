@@ -1,0 +1,51 @@
+{
+  "liabilities": {
+    "cashflows": {
+      "2025": 1200000000,
+      "2026": 1350000000,
+      "2027": 1500000000
+    },
+    "discount_rate": 0.03,
+    "longevity_assumptions": {
+      "male_life_expectancy": 82,
+      "female_life_expectancy": 86
+    }
+  },
+  "assets": {
+    "expected_returns": {
+      "equities": 0.07,
+      "bonds": 0.035,
+      "real_estate": 0.05,
+      "alternatives": 0.09,
+      "cash": 0.015
+    },
+    "volatility": {
+      "equities": 0.18,
+      "bonds": 0.05,
+      "real_estate": 0.10,
+      "alternatives": 0.20,
+      "cash": 0.01
+    },
+    "correlations": {
+      "equities": {"bonds": -0.2, "real_estate": 0.5},
+      "bonds": {"real_estate": -0.1}
+    },
+    "current_allocation": {
+      "equities": 0.30,
+      "bonds": 0.40,
+      "real_estate": 0.20,
+      "alternatives": 0.05,
+      "cash": 0.05
+    }
+  },
+  "constraints": {
+    "min_allocation": {"bonds": 0.30, "cash": 0.05},
+    "max_allocation": {"equities": 0.40, "alternatives": 0.10},
+    "liquidity_requirement": 500000000,
+    "target_funding_ratio": 1.0
+  },
+  "scenarios": {
+    "inflation": [0.02, 0.03, 0.05],
+    "market_crash": {"equities": -0.30, "real_estate": -0.20}
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "portfolio": {
+    "properties": [
+      {
+        "id": "CASA_OFFICE_TOWER",
+        "type": "office",
+        "value": 1200000000,
+        "yield": 0.065,
+        "vacancy_rate": 0.08,
+        "location": "Casablanca"
+      },
+      {
+        "id": "RABAT_MALL",
+        "type": "retail",
+        "value": 800000000,
+        "yield": 0.055,
+        "vacancy_rate": 0.12,
+        "location": "Rabat"
+      },
+      {
+        "id": "TANGER_WAREHOUSE",
+        "type": "industrial",
+        "value": 500000000,
+        "yield": 0.07,
+        "vacancy_rate": 0.05,
+        "location": "Tangier"
+      },
+      {
+        "id": "MARRAKECH_RESIDENTIAL_COMPLEX",
+        "type": "residential",
+        "value": 1000000000,
+        "yield": 0.045,
+        "vacancy_rate": 0.15,
+        "location": "Marrakech"
+      }
+    ]
+  },
+  "constraints": {
+    "min_yield": 0.05,
+    "max_vacancy": 0.10,
+    "liquidity_needs": 0.10,
+    "regulatory_limits": {
+      "max_office": 0.40,
+      "max_retail": 0.30,
+      "max_industrial": 0.20,
+      "max_residential": 0.20
+    }
+  },
+  "market_data": {
+    "office_avg_yield": 0.06,
+    "retail_avg_yield": 0.055,
+    "industrial_avg_yield": 0.07,
+    "residential_avg_yield": 0.05,
+    "vacancy_trends": {
+      "office": 0.09,
+      "retail": 0.13,
+      "industrial": 0.06,
+      "residential": 0.12
+    }
+  },
+  "scenarios": [
+    {
+      "name": "2008_crisis",
+      "shock_office": -0.04,
+      "shock_retail": -0.10,
+      "shock_industrial": -0.02,
+      "shock_residential": -0.03
+    },
+    {
+      "name": "inflation_spike",
+      "shock_office": -0.02,
+      "shock_retail": -0.05,
+      "shock_industrial": -0.01,
+      "shock_residential": -0.04
+    }
+  ]
+}
