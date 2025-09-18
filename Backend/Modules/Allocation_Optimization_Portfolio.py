@@ -3,6 +3,9 @@ from agno.db.sqlite import SqliteDb
 from agno.models.openai import OpenAIChat
 from agno.models.xai import xAI
 from agno.tools.file import FileTools
+from agno.tools.exa import ExaTools
+from agno.tools.yfinance import YFinanceTools
+
 from dotenv import load_dotenv
 import os
 import sys
@@ -20,6 +23,10 @@ from Backend.Tools.Allocation_tools import (
     #OPCI_tools
     opci_optimizer,
     scenario_stress_tester,
+
+    #RebalancingAI
+    calculate_deviation,
+    rebalance_portfolio,
 )
 
 
@@ -33,7 +40,7 @@ def get_data(path: str):
     with open(path, "r") as f:
         return f.read()
     
-
+# First agent
 ActuarialOptimizer = Agent(
     name="Actuarial Optimizer",
     model=xAI(id="grok-3-mini", api_key=os.getenv("XAI_API_KEY")),
@@ -96,7 +103,6 @@ ActuarialOptimizer = Agent(
         ,
     tools=[present_value_calculator, portfolio_statistics, simple_optimizer, stress_tester, FileTools(), get_data],
 )
-
 
 # ActuarialOptimizer.print_response("compute portfolio statistics and suggest an optimized allocation")
 
@@ -161,6 +167,74 @@ OPCIAnalyzer=Agent(
     stream=True,
 )
 
-
 # OPCIAnalyzer.print_response("analyze the current OPCI portfolio and suggest an optimized allocation")
 
+# 3rd agent
+MarocMarketBot = Agent(
+    name="local Moroccan financial market strategist",
+    model=xAI(id="grok-3-mini", api_key=os.getenv("XAI_API_KEY")),
+    description="""
+    MarocMarketBot is a tactical financial market strategist specialized in the Moroccan market. 
+    It analyzes Moroccan equities, bonds, commodities, and macroeconomic indicators to provide short- to medium-term allocation recommendations. 
+    It monitors market trends, sector performance, and emerging risks to guide portfolio adjustments within user-defined constraints.
+    """,
+    instructions="""
+    You are the MarocMarketBot, a tactical market specialist focused exclusively on the Moroccan financial market.
+
+    Available Tools:
+        - ExaTools → use to fetch Moroccan financial news, reports, and macroeconomic updates.
+        - YFinanceTools → use to retrieve historical and real-time data for Moroccan stocks, indices, bonds, and commodities.
+
+    Guidelines:
+    1. Only analyze instruments from the Moroccan financial market (e.g., MASI index, Moroccan banks, bonds, local commodities).
+    2. Focus on short- to medium-term tactical allocation recommendations (days to a few months).
+    3. Decide which tool to use based on the user request:
+        - For news, market reports, or macroeconomic updates → use ExaTools.
+        - For stock prices, trends, yields, volumes → use YFinanceTools.
+    4. Always respond professionally, providing:
+        - JSON output with recommended allocations, sector recommendations, and alerts.
+        - A human-readable summary explaining your rationale.
+    5. Highlight any potential risks, opportunities, or constraints influencing your recommendations.
+    6. Ensure suggested allocations respect the portfolio constraints provided by the user.
+    7. If the user requests trends for a specific symbol (e.g., MASI or a stock ticker), fetch current and historical data via YFinanceTools and summarize the trend clearly.
+    """,
+    tools=[ExaTools(), YFinanceTools()],
+    
+    # stream=True,
+)
+
+# MarocMarketBot.print_response("Provide tactical allocation for the next quarter on the Itissalat Al-Maghrib (IAM) company", stream=True)
+
+# #to test other than the moroccan market => didn't give results => working
+# MarocMarketBot.print_response("Provide tactical allocation for the next quarter on the Nasdaq", stream=True)
+
+# 4th agent
+RebalancingAI = Agent(
+    name="RebalancingAI",
+    model=xAI(id="grok-3-mini", api_key=os.getenv("XAI_API_KEY")),
+    description="""
+    RebalancingAI monitors the current portfolio against the target allocation and proposes rebalancing trades. 
+    It considers market liquidity, transaction costs, and constraints to minimize market impact and maintain portfolio risk metrics within limits.
+    """,
+    instructions="""
+    You are RebalancingAI, responsible for intelligent portfolio rebalancing and arbitrage detection.
+
+    Available Tools:
+        - get_data → retrieves default rebalancing input data from `D:/CIMR-OS/Backend/Inputs/RebalancingAI.json` (use this first if the user does not provide custom JSON).
+        - calculate_deviation → computes deviations between current and target allocations.
+        - rebalance_portfolio → suggests trades to rebalance the portfolio respecting constraints and minimizing market impact.
+
+    Guidelines:
+    1. Always respond professionally, providing JSON output with rebalance plans, risk metrics, and a human-readable summary.
+    2. Use calculate_deviation first to determine which assets are overweight or underweight.
+    3. Use rebalance_portfolio to propose trades based on deviations, constraints, and market liquidity.
+    4. Highlight any arbitrage opportunities if detected.
+    5. Ensure all suggested trades respect max_trade_percentage and risk limits.
+    6. Provide explanations for recommendations and potential risks or benefits of the trades.
+    7. Always summarize results clearly, both in machine-readable JSON and in a short textual summary.
+    """,
+    tools=[calculate_deviation, rebalance_portfolio, get_data],
+    markdown=True
+)
+
+# RebalancingAI.print_response( "rebalance portfolio to target allocation", stream=True)

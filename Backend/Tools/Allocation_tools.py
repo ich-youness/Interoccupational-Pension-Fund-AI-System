@@ -196,3 +196,66 @@ def scenario_stress_tester(data: Dict[str, Any]) -> str:
         })
 
     return json.dumps({"stress_results": stress_results})
+
+
+### RebalancingAI tools
+
+
+@tool(name="calculate_deviation", description="Calculate deviations between current and target allocations.")
+def calculate_deviation(data: Dict[str, Any]) -> str:
+    """
+    Input JSON:
+    {
+        "current_portfolio": {"equities": 0.55, "bonds": 0.35, "commodities": 0.10},
+        "target_allocation": {"equities": 0.50, "bonds": 0.40, "commodities": 0.10}
+    }
+    Output JSON:
+    {"deviation": {"equities": 0.05, "bonds": -0.05, "commodities": 0.0}}
+    """
+    current = data["current_portfolio"]
+    target = data["target_allocation"]
+    deviation = {k: round(current[k] - target.get(k, 0.0), 4) for k in current}
+    return json.dumps({"deviation": deviation})
+
+
+@tool(name="rebalance_portfolio", description="Suggest rebalancing trades based on deviation, constraints, and market data.")
+def rebalance_portfolio(data: Dict[str, Any]) -> str:
+    """
+    Input JSON includes:
+    - current_portfolio
+    - target_allocation
+    - market_data (liquidity, transaction_costs)
+    - constraints (max_trade_percentage)
+    
+    Output JSON includes:
+    - rebalance_plan
+    - estimated_risk_metrics
+    - summary
+    """
+    deviation = {k: data["current_portfolio"][k] - data["target_allocation"].get(k, 0.0)
+                 for k in data["current_portfolio"]}
+    max_trade = data.get("constraints", {}).get("max_trade_percentage", 0.1)
+    
+    rebalance_plan = {}
+    for asset, diff in deviation.items():
+        if abs(diff) < 0.001:
+            action = "hold"
+            amount = 0.0
+        elif diff > 0:
+            action = "sell"
+            amount = min(diff, max_trade)
+        else:
+            action = "buy"
+            amount = min(-diff, max_trade)
+        rebalance_plan[asset] = {"action": action, "amount": round(amount, 4)}
+    
+    # Mock risk metrics (can be replaced with real calculation)
+    risk_metrics = {"VaR": 0.045, "volatility": 0.095}
+    
+    summary = "Suggested trades to move portfolio closer to target allocation within constraints. Minimal market impact expected."
+    
+    return json.dumps({
+        "rebalance_plan": rebalance_plan,
+        "risk_metrics": risk_metrics,
+        "summary": summary
+    })

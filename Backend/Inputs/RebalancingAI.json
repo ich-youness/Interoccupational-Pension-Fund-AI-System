@@ -1,0 +1,32 @@
+{
+  "current_portfolio": {
+    "equities": 0.55,
+    "bonds": 0.35,
+    "commodities": 0.10
+  },
+  "target_allocation": {
+    "equities": 0.50,
+    "bonds": 0.40,
+    "commodities": 0.10
+  },
+  "market_data": {
+    "liquidity": {
+      "equities": "high",
+      "bonds": "medium",
+      "commodities": "low"
+    },
+    "transaction_costs": {
+      "equities": 0.002,
+      "bonds": 0.001,
+      "commodities": 0.005
+    }
+  },
+  "constraints": {
+    "max_trade_percentage": 0.10,
+    "risk_limits": {
+      "VaR": 0.05,
+      "volatility": 0.10
+    }
+  }
+  
+}
