@@ -2,7 +2,7 @@ import json
 import math
 from typing import Dict, Any
 from agno.tools import tool
-
+import numpy as np
 
 @tool(name="present_value_calculator", description="Calculate the present value of liabilities.")
 def present_value_calculator(data: Dict[str, Any]) -> str:
@@ -259,3 +259,167 @@ def rebalance_portfolio(data: Dict[str, Any]) -> str:
         "risk_metrics": risk_metrics,
         "summary": summary
     })
+
+
+############################ 2end Module
+
+@tool(name="parametric_var_calculator", description="Compute parametric Value at Risk (VaR) for a portfolio.")
+def parametric_var_calculator(data: Dict[str, Any]) -> str:
+    """
+    Input JSON:
+    {
+        "portfolio": {asset: {"weight": float, "price": float, "volatility": float}, ...},
+        "confidence_level": 0.95,
+        "time_horizon_days": 1,
+        "correlations": { "asset1-asset2": float, ... }
+    }
+    Output JSON:
+    {
+        "VaR": float,
+        "asset_contributions": {asset: float, ...},
+        "summary": str
+    }
+    """
+    portfolio = data["portfolio"]
+    confidence = data.get("confidence_level", 0.95)
+    horizon = data.get("time_horizon_days", 1)
+    
+    assets = list(portfolio.keys())
+    weights = np.array([portfolio[a]["weight"] for a in assets])
+    volatilities = np.array([portfolio[a]["volatility"] for a in assets])
+    
+    # Build correlation matrix
+    corr_matrix = np.eye(len(assets))
+    for i, a1 in enumerate(assets):
+        for j, a2 in enumerate(assets):
+            if i < j:
+                key = f"{a1}-{a2}"
+                rev_key = f"{a2}-{a1}"
+                corr = data.get("correlations", {}).get(key, data.get("correlations", {}).get(rev_key, 0))
+                corr_matrix[i, j] = corr
+                corr_matrix[j, i] = corr
+    
+    cov_matrix = np.outer(volatilities, volatilities) * corr_matrix
+    portfolio_var = weights.T @ cov_matrix @ weights
+    portfolio_std = np.sqrt(portfolio_var) * np.sqrt(horizon)
+    z_score = -1 * np.percentile(np.random.normal(0, 1, 100000), (1-confidence)*100)
+    VaR = round(portfolio_std * z_score * sum([portfolio[a]["price"] for a in assets]), 2)
+    
+    # Asset contributions (approximate)
+    asset_contributions = {a: round(weights[i] * portfolio_std * portfolio[a]["price"], 2) for i, a in enumerate(assets)}
+    
+    summary = f"{horizon}-day {int(confidence*100)}% VaR indicates a potential loss of {VaR} DH. Major contributors: {', '.join(assets)}."
+    
+    return json.dumps({
+        "VaR": VaR,
+        "asset_contributions": asset_contributions,
+        "summary": summary
+    })
+
+@tool(name="apply_stress_scenarios", description="Apply predefined stress scenarios to a portfolio and compute losses.")
+def apply_stress_scenarios(data: Dict[str, Any]) -> str:
+    """
+    Apply stress shocks to portfolio allocations and compute portfolio losses.
+    Input JSON:
+    {
+      "portfolio": {"MASI": {"weight":0.3,"value":1.5e9}, "Gov10Y": {"weight":0.4,"value":2e9}},
+      "scenarios": [
+        {"name":"Market Crash","equity_drop":0.3,"bond_drop":0.05},
+        {"name":"Interest Rate Spike","equity_drop":0.1,"bond_drop":0.2}
+      ]
+    }
+    Output JSON:
+    {
+      "scenario_results": [
+        {"name":"Market Crash","portfolio_loss":1.2e6,"alert":true,"recommendation":"Reduce equity exposure"},
+        {"name":"Interest Rate Spike","portfolio_loss":0.6e6,"alert":false,"recommendation":"Monitor bonds"}
+      ]
+    }
+    """
+    portfolio = data["portfolio"]
+    scenarios = data["scenarios"]
+
+    results = []
+    total_value = sum(asset["value"] for asset in portfolio.values())
+
+    for sc in scenarios:
+        # Apply shocks
+        equity_loss = sum(
+            asset["value"] * sc.get("equity_drop", 0)
+            for k, asset in portfolio.items()
+            if "MASI" in k or "EQ" in k.upper()
+        )
+        bond_loss = sum(
+            asset["value"] * sc.get("bond_drop", 0)
+            for k, asset in portfolio.items()
+            if "BOND" in k.upper() or "Gov" in k or "Corp" in k
+        )
+        total_loss = equity_loss + bond_loss
+        loss_pct = total_loss / total_value
+
+        # Alert if losses exceed 10% of portfolio value
+        alert = loss_pct > 0.1
+
+        recommendation = (
+            "Reduce equity exposure, increase liquid bonds"
+            if alert
+            else "No immediate action required, monitor exposures"
+        )
+
+        results.append(
+            {
+                "name": sc["name"],
+                "portfolio_loss": total_loss,
+                "alert": alert,
+                "recommendation": recommendation,
+            }
+        )
+
+    return json.dumps({"scenario_results": results})
+
+import json
+from typing import Dict, Any
+from agno.tools import tool
+
+@tool(name="longevity_shift_calculator", description="Quantify the impact of longevity shifts (+1, +2, +3 years life expectancy) on liabilities.")
+def longevity_shift_calculator(data: Dict[str, Any]) -> str:
+    """
+    Simulates the effect of longevity improvements on pension liabilities.
+    Input JSON must include liabilities.annual_benefits, liabilities.discount_rate, 
+    baseline_liabilities, and scenarios.longevity_shift.
+    
+    Output: JSON with adjusted liabilities for each longevity shift.
+    """
+    baseline = data["liabilities"]["baseline"]
+    annual_benefits = data["liabilities"]["annual_benefits"]
+    discount_rate = data["liabilities"]["discount_rate"]
+    shifts = data["scenarios"]["longevity_shift"]
+
+    results = {}
+    for s in shifts:
+        # Simplified model: extend payments by `s` years
+        extra = sum(annual_benefits / ((1 + discount_rate) ** (i+1)) for i in range(s))
+        results[f"longevity_shift_+{s}"] = baseline + extra
+
+    return json.dumps(results)
+
+
+@tool(name="mortality_shock_calculator", description="Apply shocks to mortality rates and estimate their impact on liabilities.")
+def mortality_shock_calculator(data: Dict[str, Any]) -> str:
+    """
+    Applies mortality shocks (e.g., -5%, -10%) meaning people die less often, 
+    hence longer payouts. Recomputes liabilities accordingly.
+    
+    Input JSON must include liabilities.baseline and scenarios.mortality_shock.
+    Output JSON with adjusted liabilities for each mortality shock.
+    """
+    baseline = data["liabilities"]["baseline"]
+    shocks = data["scenarios"]["mortality_shock"]
+
+    results = {}
+    for shock in shocks:
+        # Assume liabilities increase proportionally to mortality improvement
+        adjusted = baseline * (1 + abs(shock) / 100 * 0.5)  # sensitivity factor 0.5
+        results[f"mortality_shock_{shock}%"] = adjusted
+
+    return json.dumps(results)

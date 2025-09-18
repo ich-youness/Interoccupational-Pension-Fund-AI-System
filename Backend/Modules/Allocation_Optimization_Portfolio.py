@@ -27,6 +27,10 @@ from Backend.Tools.Allocation_tools import (
     #RebalancingAI
     calculate_deviation,
     rebalance_portfolio,
+
+    #### 2nd module
+    ## VaRCalculator
+    parametric_var_calculator,
 )
 
 
@@ -238,3 +242,4 @@ RebalancingAI = Agent(
 )
 
 # RebalancingAI.print_response( "rebalance portfolio to target allocation", stream=True)
+

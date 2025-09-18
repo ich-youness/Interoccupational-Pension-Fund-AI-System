@@ -1,0 +1,42 @@
+{
+  "portfolio": {
+    "holdings": [
+      { "asset": "MASI Index", "value": 2000000, "weight": 0.45 },
+      { "asset": "OBLIG 5Y", "value": 1000000, "weight": 0.25 },
+      { "asset": "USD/MAD FX Hedge", "value": 500000, "weight": 0.15 },
+      { "asset": "Real Estate OPCI", "value": 400000, "weight": 0.15 }
+    ],
+    "total_value": 3900000
+  },
+  "scenarios": [
+    {
+      "name": "Oil Shock",
+      "shock_type": "commodity_price_increase",
+      "magnitude": 0.25,
+      "description": "Oil prices rise 25%, impacting Moroccan trade balance."
+    },
+    {
+      "name": "Interest Rate Hike",
+      "shock_type": "interest_rate_change",
+      "magnitude": 0.02,
+      "description": "Bank Al-Maghrib raises policy rate by 200 bps."
+    },
+    {
+      "name": "Currency Depreciation",
+      "shock_type": "fx_rate_change",
+      "magnitude": -0.15,
+      "description": "MAD depreciates 15% against USD/EUR."
+    },
+    {
+      "name": "Equity Market Crash",
+      "shock_type": "equity_drop",
+      "magnitude": -0.30,
+      "description": "MASI Index drops 30% in a short period."
+    }
+  ],
+  "constraints": {
+    "max_loss_tolerance": 0.20,
+    "min_liquidity_ratio": 0.10,
+    "stress_horizon_days": 30
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "portfolio": {
+    "MASI": {"weight": 0.3, "price": 14000, "volatility": 0.02},
+    "ATW": {"weight": 0.2, "price": 1200, "volatility": 0.03},
+    "Gov10Y": {"weight": 0.4, "price": 100, "volatility": 0.01},
+    "CorpXYZ": {"weight": 0.1, "price": 95, "volatility": 0.015}
+  },
+  "confidence_level": 0.95,
+  "time_horizon_days": 1,
+  "correlations": {
+    "MASI-ATW": 0.6,
+    "MASI-Gov10Y": -0.2,
+    "MASI-CorpXYZ": 0.1,
+    "ATW-Gov10Y": -0.1,
+    "ATW-CorpXYZ": 0.05,
+    "Gov10Y-CorpXYZ": 0.2
+  },
+  "constraints": {
+    "VaR_limit": 1.5e6,
+    "volatility_limit": 0.10
+  }
+
+}
