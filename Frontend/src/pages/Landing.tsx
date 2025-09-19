@@ -1,16 +1,53 @@
 import { useNavigate } from "react-router-dom";
 import { Card, CardContent } from "@/components/ui/card";
-import { Users, Shield, Code, Zap, Brain, Globe, BarChart3, Building2 } from "lucide-react";
+import { 
+  Users, 
+  Shield, 
+  TrendingDown, 
+  ChartBar, 
+  PieChart,
+  Building2,
+  FileText,
+  Calculator,
+  Target,
+  Eye,
+  AlertCircle,
+  Heart,
+  Activity,
+  Brain
+} from "lucide-react";
 
 const teams = [
-  { id: "scenario-optimization", name: "FiP Scenario Simulation AI Module", icon: BarChart3, description: "AI-powered Excel scenario mix analysis, optimization, and reporting for insurance portfolios" },
-  // { id: "fip-ai", name: "FIP AI Team", icon: Building2, description: "AI-powered Financial Insurance Platform agents for data processing, financial calculations, and scenario management" },
-  // { id: "development", name: "Development Team", icon: Code, description: "Software development and engineering" },
-  // { id: "security", name: "Security Team", icon: Shield, description: "Cybersecurity and threat analysis" },
-  // { id: "operations", name: "Operations Team", icon: Zap, description: "Infrastructure and deployment" },
-  // { id: "research", name: "Research Team", icon: Brain, description: "AI research and innovation" },
-  // { id: "product", name: "Product Team", icon: Globe, description: "Product strategy and management" },
-  // { id: "support", name: "Support Team", icon: Users, description: "Customer success and support" }
+  { 
+    id: "acaps_compliance", 
+    name: "ACAPS Compliance Module", 
+    icon: Shield, 
+    description: "AI-powered regulatory compliance and reporting for pension fund management" 
+  },
+  { 
+    id: "member_relations", 
+    name: "Member Relations Module", 
+    icon: Users, 
+    description: "AI-powered member services, pension simulation, and fraud detection" 
+  },
+  { 
+    id: "financial_risk", 
+    name: "Financial Risk Management Module", 
+    icon: TrendingDown, 
+    description: "AI-powered risk assessment, stress testing, and financial analysis" 
+  },
+  { 
+    id: "actuarial_projections", 
+    name: "Actuarial Projections Module", 
+    icon: ChartBar, 
+    description: "AI-powered demographic analysis, pension calculations, and reserve optimization" 
+  },
+  { 
+    id: "allocation_optimization", 
+    name: "Allocation Optimization Module", 
+    icon: PieChart, 
+    description: "AI-powered portfolio optimization, rebalancing, and OPCI management" 
+  }
 ];
 
 const Landing = () => {

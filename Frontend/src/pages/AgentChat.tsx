@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { ChevronLeft, Send, Bot, User, Users, Loader2, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { scenarioOptimizationTeam, allTeams } from "@/data/Modules";
+import { allTeams } from "@/data/Modules";
 import React from "react";
 import ReactMarkdown from "react-markdown";
 
@@ -72,17 +72,35 @@ const AgentChat = () => {
   };
   const callBackendAPI = async (prompt: string, agentId: string) => {
     try {
+      if (!selectedAgent) {
+        throw new Error('No agent selected');
+      }
+
+      // Map team IDs to module names for the API
+      const moduleMapping: { [key: string]: string } = {
+        'acaps_compliance': 'acaps_compliance',
+        'member_relations': 'member_relations',
+        'financial_risk': 'financial_risk',
+        'actuarial_projections': 'actuarial_projections',
+        'allocation_optimization': 'allocation_optimization'
+      };
+
+      const moduleName = moduleMapping[selectedAgent.teamId];
+      if (!moduleName) {
+        throw new Error(`Unknown module: ${selectedAgent.teamId}`);
+      }
+
       const requestBody = {
-        moduleId: selectedAgent.teamId === 'fip-ai' ? 'fip-ai' : 'scenario-optimization',
-        agentId: agentId,
-        prompt: prompt + (selectedAgent.teamId === 'fip-ai' ? "" : " here is the excel file path: D:/Assurance_OS/Backend/Agent_V2/Inputs/Template_scenario_mix_P&C2.xlsx"),
-        config: {}
+        query: prompt,
+        module: moduleName,
+        agent: agentId,
+        custom_data: {}
       };
       
       console.log('Making API call with:', requestBody);
       console.log('Selected agent:', selectedAgent);
       
-      const response = await fetch('http://127.0.0.1:8000/module', {
+      const response = await fetch('http://localhost:8000/query', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -177,7 +195,7 @@ const AgentChat = () => {
               <span className="text-sm text-fourth-color/70">Generated Visualization</span>
             </div>
             <img
-              src={`http://127.0.0.1:8000/images/${encodeURIComponent(filename)}`}
+              src={`http://localhost:8000/images/${encodeURIComponent(filename)}`}
               alt={`Generated visualization ${index + 1}`}
               className="max-w-full h-auto rounded border border-third-color/20"
               onError={(e) => {
@@ -187,7 +205,7 @@ const AgentChat = () => {
                 if (timestamp) {
                   const altFilename = `plot_IFRS Capital (central)_${timestamp[1]}.png`;
                   console.log(`Trying alternative filename: ${altFilename}`);
-                  e.currentTarget.src = `http://127.0.0.1:8000/images/${encodeURIComponent(altFilename)}`;
+                  e.currentTarget.src = `http://localhost:8000/images/${encodeURIComponent(altFilename)}`;
                 } else {
                   e.currentTarget.style.display = 'none';
                 }

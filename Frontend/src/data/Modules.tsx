@@ -17,7 +17,16 @@ import {
   Building2,
   Activity,
   Layers,
-  Workflow
+  Workflow,
+  Scale,
+  Heart,
+  DollarSign,
+  ChartBar,
+  UserCheck,
+  AlertCircle,
+  TrendingDown,
+  PieChart as PieChartIcon,
+  Target as TargetIcon
 } from "lucide-react";
 
 export interface Agent {
@@ -45,118 +54,399 @@ export interface Team {
   subTeams: SubTeam[];
 }
 
-export const scenarioOptimizationTeam: Team = {
-  id: "scenario-optimization",
-  name: "FiP Scenario Simulation AI Module",
-  description: "AI-powered Excel scenario mix analysis, optimization, and reporting for insurance portfolios",
-  icon: BarChart3,
+// ACAPS Compliance Module
+export const acapsComplianceTeam: Team = {
+  id: "acaps_compliance",
+  name: "ACAPS Compliance Module",
+  description: "AI-powered regulatory compliance and reporting for pension fund management",
+  icon: Shield,
   subTeams: [
     {
-      id: "data-management",
-      name: "Data Management",
-      description: "Excel data loading, validation, and structured access to financial metrics",
-      mode: "Coordinate",
-      icon: Database,
-      agents: [
-        {
-          id: "data-access-agent",
-          name: "Data Access Agent",
-          description: "Excel Scenario Data Access and Management Expert - Loading, accessing, and managing Excel scenario mix data with clean, structured access to financial metrics",
-          icon: Database,
-          outputs: [
-            "Clean Excel Scenario Data",
-            "Structured Financial Metrics Access",
-            "Data Quality Reports",
-            "Portfolio & Year Management",
-            "Data Validation Results"
-          ]
-        }
-      ]
-    },
-    {
-      id: "computation-modeling",
-      name: "Computation & Modeling",
-      description: "Financial calculations, scenario modeling, and optimization algorithms",
-      mode: "Coordinate",
-      icon: Calculator,
-      agents: [
-        {
-          id: "computation-agent",
-          name: "Computation Agent",
-          description: "Financial Calculations and Scenario Modeling Expert - Performing complex financial calculations, applying shocks, running scenarios, and executing optimization algorithms",
-          icon: Calculator,
-          outputs: [
-            "Shock Application Results",
-            "Scenario Modeling Outputs",
-            "Portfolio Optimization Recommendations",
-            "Financial Calculations",
-            "Scenario Comparison Analysis"
-          ]
-        }
-      ]
-    },
-    {
-      id: "analytics-insights",
-      name: "Analytics & Insights",
-      description: "Financial analytics, risk analysis, and business intelligence",
-      mode: "Coordinate",
-      icon: TrendingUp,
-      agents: [
-        {
-          id: "analytics-insights-agent",
-          name: "Analytics & Insights Agent",
-          description: "Financial Analytics and Business Intelligence Expert - Analyzing financial data to generate insights, perform risk analysis, conduct stress testing, and provide business intelligence",
-          icon: TrendingUp,
-          outputs: [
-            "Financial Analysis Reports",
-            "Risk Assessment & Concentration Analysis",
-            "Stress Test Results",
-            "Sensitivity Analysis",
-            "Business Intelligence Insights"
-          ]
-        }
-      ]
-    },
-    {
-      id: "reporting-visualization",
-      name: "Reporting & Visualization",
-      description: "Data visualization, report generation, and stakeholder communication",
+      id: "regulatory-reporting",
+      name: "Regulatory Reporting",
+      description: "Automated ACAPS regulatory reporting and compliance monitoring",
       mode: "Coordinate",
       icon: FileText,
       agents: [
         {
-          id: "reporting-visualization-agent",
-          name: "Reporting & Visualization Agent",
-          description: "Data Visualization and Report Generation Expert - Creating visualizations, generating reports, and exporting analysis results in various formats for stakeholders",
+          id: "acaps_reporter",
+          name: "ACAPS Reporter",
+          description: "AI agent that automates ACAPS regulatory reporting for CIMR. Generates reports accurately, validates compliance with mandatory fields, and reduces reporting time from 15 days to 1 day.",
           icon: FileText,
           outputs: [
-            "Professional Charts & Visualizations",
-            "Comprehensive Analysis Reports",
-            "Multi-format Data Exports",
-            "Executive Dashboards",
-            "Stakeholder Presentations"
+            "ACAPS Regulatory Reports",
+            "Compliance Validation Results",
+            "Mandatory Field Verification",
+            "Report Quality Assessment",
+            "Automated Documentation"
+          ]
+        },
+        {
+          id: "compliance_monitor",
+          name: "Compliance Monitor",
+          description: "Real-time compliance monitoring agent that tracks regulatory adherence and identifies potential violations before they occur.",
+          icon: AlertCircle,
+          outputs: [
+            "Compliance Status Reports",
+            "Violation Alerts",
+            "Risk Assessment",
+            "Regulatory Updates",
+            "Compliance Recommendations"
           ]
         }
       ]
     },
     {
-      id: "master-coordination",
-      name: "Master Coordination",
-      description: "Orchestrating specialized agents for comprehensive scenario analysis",
+      id: "audit-tracking",
+      name: "Audit & Tracking",
+      description: "Audit trail management and regulatory change monitoring",
       mode: "Coordinate",
-      icon: Brain,
+      icon: Eye,
       agents: [
         {
-          id: "scenario-optimization-team",
-          name: "Scenario Optimization Team",
-          description: "Master Scenario Optimization Coordinator - Orchestrating the team of specialized agents to provide comprehensive scenario analysis, optimization, and reporting services",
+          id: "audit_tracker",
+          name: "Audit Tracker",
+          description: "Comprehensive audit trail management agent that tracks all regulatory activities and maintains detailed records for compliance purposes.",
+          icon: Eye,
+          outputs: [
+            "Audit Trail Reports",
+            "Activity Logs",
+            "Compliance Records",
+            "Documentation Trails",
+            "Audit Evidence"
+          ]
+        },
+        {
+          id: "regulation_watcher",
+          name: "Regulation Watcher",
+          description: "AI agent that monitors regulatory changes and updates, ensuring CIMR stays current with evolving compliance requirements.",
+          icon: AlertTriangle,
+          outputs: [
+            "Regulatory Updates",
+            "Change Notifications",
+            "Impact Analysis",
+            "Compliance Recommendations",
+            "Update Summaries"
+          ]
+        }
+      ]
+    }
+  ]
+};
+
+// Member Relations Module
+export const memberRelationsTeam: Team = {
+  id: "member_relations",
+  name: "Member Relations Module",
+  description: "AI-powered member services, pension simulation, and fraud detection",
+  icon: Users,
+  subTeams: [
+    {
+      id: "member-services",
+      name: "Member Services",
+      description: "AI-powered member support and pension planning services",
+      mode: "Coordinate",
+      icon: UserCheck,
+      agents: [
+        {
+          id: "cimr_chatbot",
+          name: "CIMR Chatbot",
+          description: "Intelligent chatbot providing 24/7 member support, answering pension-related questions, and guiding members through CIMR services.",
+          icon: Users,
+          outputs: [
+            "Member Support Responses",
+            "Pension Information",
+            "Service Guidance",
+            "FAQ Answers",
+            "Member Assistance"
+          ]
+        },
+        {
+          id: "pension_simulator",
+          name: "Pension Simulator",
+          description: "Interactive pension simulation agent that helps members understand their retirement benefits and plan for the future.",
+          icon: Calculator,
+          outputs: [
+            "Pension Projections",
+            "Retirement Scenarios",
+            "Benefit Calculations",
+            "Simulation Results",
+            "Planning Recommendations"
+          ]
+        }
+      ]
+    },
+    {
+      id: "security-monitoring",
+      name: "Security & Monitoring",
+      description: "Fraud detection and retirement planning security",
+      mode: "Coordinate",
+      icon: Shield,
+      agents: [
+        {
+          id: "fraud_detector",
+          name: "Pension Fraud Detector",
+          description: "Advanced fraud detection agent that monitors member accounts for suspicious activities and protects against pension fraud.",
+          icon: AlertCircle,
+          outputs: [
+            "Fraud Alerts",
+            "Risk Assessments",
+            "Suspicious Activity Reports",
+            "Security Recommendations",
+            "Threat Analysis"
+          ]
+        },
+        {
+          id: "retirement_planner",
+          name: "Retirement Planner",
+          description: "Personalized retirement planning agent that creates customized retirement strategies based on member profiles and goals.",
+          icon: Target,
+          outputs: [
+            "Retirement Plans",
+            "Financial Projections",
+            "Goal Tracking",
+            "Planning Recommendations",
+            "Progress Reports"
+          ]
+        }
+      ]
+    }
+  ]
+};
+
+// Financial Risk Management Module
+export const financialRiskTeam: Team = {
+  id: "financial_risk",
+  name: "Financial Risk Management Module",
+  description: "AI-powered risk assessment, stress testing, and financial analysis",
+  icon: TrendingDown,
+  subTeams: [
+    {
+      id: "risk-calculation",
+      name: "Risk Calculation",
+      description: "Advanced risk metrics calculation and analysis",
+      mode: "Coordinate",
+      icon: Calculator,
+      agents: [
+        {
+          id: "var_calculator",
+          name: "VaR Calculator",
+          description: "Value at Risk calculation agent that computes portfolio risk metrics and provides risk assessment for investment decisions.",
+          icon: Calculator,
+          outputs: [
+            "VaR Calculations",
+            "Risk Metrics",
+            "Portfolio Risk Analysis",
+            "Risk Reports",
+            "Statistical Models"
+          ]
+        },
+        {
+          id: "stress_tester",
+          name: "Stress Tester",
+          description: "Comprehensive stress testing agent that evaluates portfolio performance under various market scenarios and stress conditions.",
+          icon: Activity,
+          outputs: [
+            "Stress Test Results",
+            "Scenario Analysis",
+            "Risk Scenarios",
+            "Performance Metrics",
+            "Stress Reports"
+          ]
+        }
+      ]
+    },
+    {
+      id: "monitoring-analysis",
+      name: "Monitoring & Analysis",
+      description: "Credit monitoring and actuarial risk assessment",
+      mode: "Coordinate",
+      icon: Eye,
+      agents: [
+        {
+          id: "credit_monitor",
+          name: "Credit Monitor",
+          description: "Real-time credit risk monitoring agent that tracks credit quality and identifies potential credit risks in the portfolio.",
+          icon: AlertTriangle,
+          outputs: [
+            "Credit Risk Reports",
+            "Credit Quality Analysis",
+            "Risk Alerts",
+            "Credit Recommendations",
+            "Portfolio Health"
+          ]
+        },
+        {
+          id: "actuarial_risk_bot",
+          name: "Actuarial Risk Bot",
+          description: "Actuarial risk assessment agent that evaluates longevity, mortality, and demographic risks affecting pension fund sustainability.",
+          icon: Heart,
+          outputs: [
+            "Actuarial Risk Analysis",
+            "Longevity Projections",
+            "Mortality Risk Assessment",
+            "Demographic Analysis",
+            "Risk Models"
+          ]
+        }
+      ]
+    }
+  ]
+};
+
+// Actuarial Projections Module
+export const actuarialProjectionsTeam: Team = {
+  id: "actuarial_projections",
+  name: "Actuarial Projections Module",
+  description: "AI-powered demographic analysis, pension calculations, and reserve optimization",
+  icon: ChartBar,
+  subTeams: [
+    {
+      id: "demographic-analysis",
+      name: "Demographic Analysis",
+      description: "Population demographics and longevity projections",
+      mode: "Coordinate",
+      icon: Users,
+      agents: [
+        {
+          id: "demographic_ai",
+          name: "Demographic AI",
+          description: "Advanced demographic analysis agent that projects population structure, longevity trends, and demographic shifts affecting pension funds.",
+          icon: Users,
+          outputs: [
+            "Demographic Projections",
+            "Population Analysis",
+            "Longevity Trends",
+            "Demographic Reports",
+            "Statistical Models"
+          ]
+        },
+        {
+          id: "pension_calculator",
+          name: "Pension Calculator",
+          description: "Comprehensive pension calculation agent that computes benefits, contributions, and pension entitlements based on actuarial principles.",
+          icon: Calculator,
+          outputs: [
+            "Pension Calculations",
+            "Benefit Projections",
+            "Contribution Analysis",
+            "Entitlement Reports",
+            "Actuarial Valuations"
+          ]
+        }
+      ]
+    },
+    {
+      id: "optimization-planning",
+      name: "Optimization & Planning",
+      description: "Reserve optimization and scenario planning",
+      mode: "Coordinate",
+      icon: Target,
+      agents: [
+        {
+          id: "reserve_optimizer",
+          name: "Reserve Optimizer",
+          description: "Intelligent reserve optimization agent that maintains optimal reserve levels while ensuring fund sustainability and regulatory compliance.",
+          icon: PieChart,
+          outputs: [
+            "Reserve Optimization",
+            "Fund Sustainability Analysis",
+            "Optimization Recommendations",
+            "Reserve Reports",
+            "Compliance Validation"
+          ]
+        },
+        {
+          id: "scenario_planner",
+          name: "Scenario Planner",
+          description: "Strategic scenario planning agent that creates multiple future scenarios and develops adaptation strategies for different economic conditions.",
           icon: Brain,
           outputs: [
-            "Integrated Analysis Results",
-            "Coordinated Team Outputs",
-            "Master Recommendations",
-            "Quality Assurance Reports",
-            "Comprehensive Scenario Insights"
+            "Scenario Analysis",
+            "Strategic Plans",
+            "Adaptation Strategies",
+            "Future Projections",
+            "Planning Reports"
+          ]
+        }
+      ]
+    }
+  ]
+};
+
+// Allocation Optimization Module
+export const allocationOptimizationTeam: Team = {
+  id: "allocation_optimization",
+  name: "Allocation Optimization Module",
+  description: "AI-powered portfolio optimization, rebalancing, and OPCI management",
+  icon: PieChartIcon,
+  subTeams: [
+    {
+      id: "portfolio-optimization",
+      name: "Portfolio Optimization",
+      description: "Advanced portfolio optimization and rebalancing strategies",
+      mode: "Coordinate",
+      icon: TargetIcon,
+      agents: [
+        {
+          id: "actuarial_optimizer",
+          name: "Actuarial Optimizer",
+          description: "AI-powered portfolio optimization agent that uses actuarial projections to optimize asset allocation and maximize long-term returns.",
+          icon: TargetIcon,
+          outputs: [
+            "Portfolio Optimization",
+            "Asset Allocation Recommendations",
+            "Optimization Strategies",
+            "Performance Analysis",
+            "Risk-Adjusted Returns"
+          ]
+        },
+        {
+          id: "rebalancing_ai",
+          name: "Rebalancing AI",
+          description: "Intelligent rebalancing agent that monitors portfolio drift and executes optimal rebalancing strategies to maintain target allocations.",
+          icon: Activity,
+          outputs: [
+            "Rebalancing Recommendations",
+            "Drift Analysis",
+            "Trading Strategies",
+            "Portfolio Adjustments",
+            "Performance Tracking"
+          ]
+        }
+      ]
+    },
+    {
+      id: "specialized-investments",
+      name: "Specialized Investments",
+      description: "OPCI optimization and scenario stress testing",
+      mode: "Coordinate",
+      icon: Building2,
+      agents: [
+        {
+          id: "opci_optimizer",
+          name: "OPCI Optimizer",
+          description: "Real estate investment optimization agent that manages OPCI (Organisme de Placement Collectif Immobilier) allocations and maximizes real estate returns.",
+          icon: Building2,
+          outputs: [
+            "OPCI Optimization",
+            "Real Estate Analysis",
+            "Property Recommendations",
+            "Investment Strategies",
+            "Real Estate Reports"
+          ]
+        },
+        {
+          id: "scenario_stress_tester",
+          name: "Scenario Stress Tester",
+          description: "Comprehensive scenario stress testing agent that evaluates portfolio performance under various market conditions and stress scenarios.",
+          icon: AlertTriangle,
+          outputs: [
+            "Stress Test Results",
+            "Scenario Analysis",
+            "Risk Assessment",
+            "Performance Metrics",
+            "Stress Reports"
           ]
         }
       ]
@@ -239,4 +529,10 @@ export const scenarioOptimizationTeam: Team = {
 //   ]
 // };
 
-export const allTeams = [scenarioOptimizationTeam]; //, fipAITeam];
+export const allTeams = [
+  acapsComplianceTeam,
+  memberRelationsTeam,
+  financialRiskTeam,
+  actuarialProjectionsTeam,
+  allocationOptimizationTeam
+];
