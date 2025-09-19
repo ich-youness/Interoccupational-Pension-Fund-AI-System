@@ -1,0 +1,27 @@
+{
+  "report_date": "2025-09-19",
+  "portfolio_summary": {
+    "total_assets": 5000000000,
+    "allocation": {
+      "equities": 0.45,
+      "bonds": 0.35,
+      "real_estate": 0.15,
+      "cash": 0.05
+    }
+  },
+  "reserves": {
+    "technical_reserve": 4000000000,
+    "provisions": 500000000
+  },
+  "contributions": [
+    {"member_id": "CIMR123456", "amount": 5000, "date": "2025-09-18"},
+    {"member_id": "CIMR123457", "amount": 7000, "date": "2025-09-18"}
+  ],
+  "pension_payments": [
+    {"member_id": "CIMR123456", "amount": 12000, "date": "2025-09-18"}
+  ],
+  "compliance_rules": {
+    "reporting_deadline": "J+1",
+    "mandatory_fields": ["total_assets", "reserves", "contributions", "pension_payments"]
+  }
+}

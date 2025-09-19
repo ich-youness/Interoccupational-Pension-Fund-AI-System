@@ -1,0 +1,25 @@
+{
+  "portfolio": {
+    "total_assets": 5000000000,
+    "equity_allocation": 0.45,
+    "bond_allocation": 0.35,
+    "real_estate_allocation": 0.15,
+    "cash_allocation": 0.05
+  },
+  "reserves": {
+    "technical_reserve": 4000000000,
+    "provisions": 500000000
+  },
+  "contributions": [
+    {"member_id": "CIMR123456", "amount": 5000, "date": "2025-09-18"}
+  ],
+  "pension_payments": [
+    {"member_id": "CIMR123456", "amount": 12000, "date": "2025-09-18"}
+  ],
+  "compliance_rules": {
+    "max_equity_allocation": 0.5,
+    "min_bond_allocation": 0.3,
+    "max_pension_payment": 15000,
+    "reserve_ratio_min": 0.8
+  }
+}

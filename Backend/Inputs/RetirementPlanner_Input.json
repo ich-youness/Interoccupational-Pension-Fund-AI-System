@@ -1,0 +1,33 @@
+{
+  "member_id": "CIMR123456",
+  "personal_info": {
+    "first_name": "Mohamed",
+    "last_name": "Elhaj",
+    "date_of_birth": "1970-05-15",
+    "membership_status": "active",
+    "current_age": 55,
+    "years_of_service": 30,
+    "average_salary": 240000
+  },
+  "account_info": {
+    "current_reserve": 4500000,
+    "contributions_paid": 900000,
+    "investment_profile": "balanced"
+  },
+  "retirement_info": {
+    "desired_retirement_age": 62,
+    "early_retirement_age": 60,
+    "late_retirement_age": 65,
+    "partial_retirement_options": true
+  },
+  "economic_assumptions": {
+    "expected_equity_return": 0.07,
+    "expected_bond_return": 0.03,
+    "inflation_rate": 0.025,
+    "salary_growth_rate": 0.03
+  },
+  "user_goals": {
+    "target_monthly_pension": 15000,
+    "desired_savings_at_retirement": 5000000
+  }
+}

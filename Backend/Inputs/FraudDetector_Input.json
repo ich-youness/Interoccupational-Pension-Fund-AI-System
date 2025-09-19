@@ -1,0 +1,31 @@
+{
+  "member_id": "CIMR123456",
+  "personal_info": {
+    "first_name": "Mohamed",
+    "last_name": "Elhaj",
+    "date_of_birth": "1970-05-15",
+    "membership_status": "active"
+  },
+  "account_info": {
+    "current_reserve": 4500000,
+    "contributions_paid": 900000,
+    "last_contribution_date": "2025-08-31",
+    "pending_contributions": 0
+  },
+  "retirement_info": {
+    "projected_retirement_age": 62,
+    "projected_pension": 12000,
+    "early_retirement_options": {"available": true, "penalty_rate": 0.15},
+    "partial_retirement_options": {"available": true, "minimum_age": 60}
+  },
+  "transaction_history": [
+    {"type": "pension_payment", "amount": 12000, "date": "2025-09-01"},
+    {"type": "contribution", "amount": 5000, "date": "2025-08-31"}
+  ],
+  "flags_and_alerts": [],
+  "rules_and_constraints": {
+    "maximum_early_retirement_penalty": 0.15,
+    "minimum_contribution_years": 10,
+    "maximum_monthly_pension": 15000
+  }
+}
