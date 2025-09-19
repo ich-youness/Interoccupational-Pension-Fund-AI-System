@@ -31,24 +31,37 @@ def get_data(path: str):
         return f.read()
 
 
-# Setup your database
-db = SqliteDb(db_file="tmp/agno.db")
+def setup_database(db_file: str = "tmp/agno.db"):
+    """Setup database connection.
+    Args:
+        db_file (str): Path to database file.
+    Returns:
+        SqliteDb: Database connection object.
+    """
+    return SqliteDb(db_file=db_file)
 
 
-
-# agent 1
-
-# Agent: CIMRChatbot
-CIMRChatbot = Agent(
-    name="CIMR Chatbot",
-    db=db,
-    model=xAI(id="grok-3-mini", api_key=os.getenv("XAI_API_KEY")),
-    description="""
+def create_cimr_chatbot(db, api_key: str = None):
+    """Create CIMR Chatbot agent.
+    Args:
+        db: Database connection object.
+        api_key (str): API key for the model.
+    Returns:
+        Agent: CIMR Chatbot agent.
+    """
+    if api_key is None:
+        api_key = os.getenv("XAI_API_KEY")
+    
+    return Agent(
+        name="CIMR Chatbot",
+        db=db,
+        model=xAI(id="grok-3-mini", api_key=api_key),
+        description="""
     A 24/7 virtual assistant for CIMR members that automatically handles the majority of inquiries.
     It provides accurate, professional answers regarding membership, pensions, contributions, regulations, forms, and general fund information.
     Escalates only complex or unusual cases to human agents.
     """,
-    instructions="""
+        instructions="""
     You are CIMRChatbot, a virtual assistant for CIMR members.
 
     Your role:
@@ -72,25 +85,32 @@ CIMRChatbot = Agent(
     5. If the inquiry cannot be answered with the data provided, politely indicate this and suggest the member contact a human agent.
     6. Maintain context across conversations to provide coherent multi-turn interactions.
     """,
-    add_history_to_context=True,
-    tools=[get_data]
-)
+        add_history_to_context=True,
+        tools=[get_data]
+    )
 
 
-# CIMRChatbot.print_response("How do I check my pension projection?")
-
-
-# Agent: PensionSimulator
-PensionSimulator = Agent(
-    name="Pension Simulator",
-    db=db,
-    model=xAI(id="grok-3-mini", api_key=os.getenv("XAI_API_KEY")),
-    description="""
+def create_pension_simulator(db, api_key: str = None):
+    """Create Pension Simulator agent.
+    Args:
+        db: Database connection object.
+        api_key (str): API key for the model.
+    Returns:
+        Agent: Pension Simulator agent.
+    """
+    if api_key is None:
+        api_key = os.getenv("XAI_API_KEY")
+    
+    return Agent(
+        name="Pension Simulator",
+        db=db,
+        model=xAI(id="grok-3-mini", api_key=api_key),
+        description="""
 A real-time, personalized retirement projection agent for CIMR members.
 Calculates projected pensions at different retirement ages, considers early/late retirement, partial retirement, contributions, salary history, and economic assumptions.
 Provides detailed and structured outputs for decision making.
 """,
-    instructions="""
+        instructions="""
 You are PensionSimulator, an AI agent that provides personalized retirement projections.
 
 Guidelines:
@@ -111,8 +131,109 @@ Guidelines:
 5. If requested, simulate alternative economic scenarios and show their impact on pension amounts.
 6. Always respond professionally, and never guess member-specific data outside the input JSON.
 """,
-    add_history_to_context=True,
-)
+        add_history_to_context=True,
+    )
+
+
+def create_fraud_detector(db, api_key: str = None):
+    """Create Fraud Detector agent.
+    Args:
+        db: Database connection object.
+        api_key (str): API key for the model.
+    Returns:
+        Agent: Fraud Detector agent.
+    """
+    if api_key is None:
+        api_key = os.getenv("XAI_API_KEY")
+    
+    return Agent(
+        name="Pension Fraud Detector",
+        db=db,
+        model=xAI(id="grok-3-mini", api_key=api_key),
+        description="""
+An AI agent that detects suspicious or fraudulent pension activity for CIMR members.
+It identifies anomalies in contributions, pension payments, early/partial retirements, duplicate records, and rule violations, providing actionable alerts to prevent financial losses.
+""",
+        instructions="""
+You are FraudDetector, an AI agent that identifies potential pension fraud.
+
+Guidelines:
+1. Review the member's JSON input, including personal_info, account_info, retirement_info, transaction_history, and rules_and_constraints.
+2. Analyze the data to detect anomalies or suspicious activity, such as:
+   - Duplicate claims or multiple entries for the same member
+   - Inconsistent contribution or payment history
+   - Early/partial retirement claims violating rules
+   - Excessive or unusual pension projections
+   - Rule violations (e.g., minimum contribution years, maximum pension limits)
+3. Return results as structured JSON:
+   - fraud_detected: true/false
+   - fraud_type: string (e.g., duplicate_claim, overpayment, invalid_member_data, rule_violation)
+   - alert_message: explanation of the anomaly
+   - recommended_action: suggested next steps (manual review, suspension, notification)
+4. Always provide a professional explanation and actionable recommendations.
+5. Escalate only if fraud_detected is true.
+""",
+        add_history_to_context=True,
+    )
+
+
+def create_retirement_planner(db, api_key: str = None):
+    """Create Retirement Planner agent.
+    Args:
+        db: Database connection object.
+        api_key (str): API key for the model.
+    Returns:
+        Agent: Retirement Planner agent.
+    """
+    if api_key is None:
+        api_key = os.getenv("XAI_API_KEY")
+    
+    return Agent(
+        name="Retirement Planner",
+        db=db,
+        model=xAI(id="grok-3-mini", api_key=api_key),
+        description="""
+An AI agent that provides personalized retirement advice and tailored savings plans for CIMR members.
+It evaluates member data, pension projections, and economic assumptions to recommend actionable retirement strategies.
+""",
+        instructions="""
+You are RetirementPlanner, an AI agent that offers personalized retirement guidance.
+
+Available Tools:
+    - get_data → retrieves default retirement planning input data from `D:/CIMR-OS/Backend/Inputs/RetirementPlanner_Input.json` 
+      (use this first if the user does not provide custom JSON).
+
+Guidelines:
+1. Always start by using get_data to read the member's input data if no custom JSON is provided.
+2. Evaluate personal_info, account_info, retirement_info, economic_assumptions, and user_goals.
+3. Provide retirement advice, including:
+   - Recommended contribution plan to meet goals
+   - Suggested adjustments to investment profile
+   - Projections of monthly and annual pensions
+   - Partial or early retirement options
+4. Return results as structured JSON:
+   - advice_summary
+   - recommended_savings_plan
+   - pension_projection
+   - risk_warnings
+5. Summarize results professionally and clearly for the member.
+6. Always provide actionable recommendations and flag potential risks.
+""",
+        tools=[get_data],
+        add_history_to_context=True,
+    )
+
+
+# Initialize database
+db = setup_database()
+
+# Create agents using functions
+CIMRChatbot = create_cimr_chatbot(db)
+
+
+# CIMRChatbot.print_response("How do I check my pension projection?")
+
+PensionSimulator = create_pension_simulator(db)
 
 
 # PensionSimulator.print_response("""
@@ -145,36 +266,7 @@ Guidelines:
 # }
 # """)
 
-# Agent: FraudDetector
-FraudDetector = Agent(
-    name="Pension Fraud Detector",
-    db=db,
-    model=xAI(id="grok-3-mini", api_key=os.getenv("XAI_API_KEY")),
-    description="""
-An AI agent that detects suspicious or fraudulent pension activity for CIMR members.
-It identifies anomalies in contributions, pension payments, early/partial retirements, duplicate records, and rule violations, providing actionable alerts to prevent financial losses.
-""",
-    instructions="""
-You are FraudDetector, an AI agent that identifies potential pension fraud.
-
-Guidelines:
-1. Review the member's JSON input, including personal_info, account_info, retirement_info, transaction_history, and rules_and_constraints.
-2. Analyze the data to detect anomalies or suspicious activity, such as:
-   - Duplicate claims or multiple entries for the same member
-   - Inconsistent contribution or payment history
-   - Early/partial retirement claims violating rules
-   - Excessive or unusual pension projections
-   - Rule violations (e.g., minimum contribution years, maximum pension limits)
-3. Return results as structured JSON:
-   - fraud_detected: true/false
-   - fraud_type: string (e.g., duplicate_claim, overpayment, invalid_member_data, rule_violation)
-   - alert_message: explanation of the anomaly
-   - recommended_action: suggested next steps (manual review, suspension, notification)
-4. Always provide a professional explanation and actionable recommendations.
-5. Escalate only if fraud_detected is true.
-""",
-    add_history_to_context=True,
-)
+FraudDetector = create_fraud_detector(db)
 
 # FraudDetector.print_response("""
 # {
@@ -213,41 +305,7 @@ Guidelines:
 
 
 
-# Agent: RetirementPlanner
-RetirementPlanner = Agent(
-    name="Retirement Planner",
-    db=db,
-    model=xAI(id="grok-3-mini", api_key=os.getenv("XAI_API_KEY")),
-    description="""
-An AI agent that provides personalized retirement advice and tailored savings plans for CIMR members.
-It evaluates member data, pension projections, and economic assumptions to recommend actionable retirement strategies.
-""",
-    instructions="""
-You are RetirementPlanner, an AI agent that offers personalized retirement guidance.
-
-Available Tools:
-    - get_data → retrieves default retirement planning input data from `D:/CIMR-OS/Backend/Inputs/RetirementPlanner_Input.json` 
-      (use this first if the user does not provide custom JSON).
-
-Guidelines:
-1. Always start by using get_data to read the member's input data if no custom JSON is provided.
-2. Evaluate personal_info, account_info, retirement_info, economic_assumptions, and user_goals.
-3. Provide retirement advice, including:
-   - Recommended contribution plan to meet goals
-   - Suggested adjustments to investment profile
-   - Projections of monthly and annual pensions
-   - Partial or early retirement options
-4. Return results as structured JSON:
-   - advice_summary
-   - recommended_savings_plan
-   - pension_projection
-   - risk_warnings
-5. Summarize results professionally and clearly for the member.
-6. Always provide actionable recommendations and flag potential risks.
-""",
-    tools=[get_data],
-    add_history_to_context=True,
-)
+RetirementPlanner = create_retirement_planner(db)
 
 # RetirementPlanner.print_response("""
 # Please provide a personalized retirement plan for the member.

@@ -43,203 +43,250 @@ def get_data(path: str):
     """
     with open(path, "r") as f:
         return f.read()
+
+
+def setup_database(db_file: str = "tmp/agno.db"):
+    """Setup database connection.
+    Args:
+        db_file (str): Path to database file.
+    Returns:
+        SqliteDb: Database connection object.
+    """
+    return SqliteDb(db_file=db_file)
+
+
+def create_actuarial_optimizer(db, api_key: str = None):
+    """Create Actuarial Optimizer agent.
+    Args:
+        db: Database connection object.
+        api_key (str): API key for the model.
+    Returns:
+        Agent: Actuarial Optimizer agent.
+    """
+    if api_key is None:
+        api_key = os.getenv("XAI_API_KEY")
     
-# First agent
-ActuarialOptimizer = Agent(
-    name="Actuarial Optimizer",
-    model=xAI(id="grok-3-mini", api_key=os.getenv("XAI_API_KEY")),
-    description="Optimizes CIMR portfolio allocation using actuarial projections, market data, and risk constraints.",
-    instructions="""
-        You are the Actuarial Optimizer Agent, responsible for optimizing CIMR’s portfolio allocation using actuarial projections, market data, and risk constraints.
+    return Agent(
+        name="Actuarial Optimizer",
+        model=xAI(id="grok-3-mini", api_key=api_key),
+        description="Optimizes CIMR portfolio allocation using actuarial projections, market data, and risk constraints.",
+        instructions="""
+                You are the Actuarial Optimizer Agent, responsible for optimizing CIMR's portfolio allocation using actuarial projections, market data, and risk constraints.
 
-        You have access to the following tools:
-            - get_data → retrieves the default actuarial and market input data from `D:\CIMR-OS\Backend\Inputs\Allocation_Input.json` (use this first if the user does not provide custom JSON).
-            - present_value_calculator → computes the present value of future liabilities given assumptions.
-            - portfolio_statistics → computes portfolio-level metrics such as returns, volatility, Sharpe ratio, and asset exposures.
-            - simple_optimizer → generates an optimized asset allocation based on objectives and constraints.
-            - stress_tester → runs stress tests on the portfolio under adverse market or demographic scenarios.
+                You have access to the following tools:
+                    - get_data → retrieves the default actuarial and market input data from `D:/CIMR-OS/Backend/Inputs/Allocation_Input.json` (use this first if the user does not provide custom JSON).
+                    - present_value_calculator → computes the present value of future liabilities given assumptions.
+                    - portfolio_statistics → computes portfolio-level metrics such as returns, volatility, Sharpe ratio, and asset exposures.
+                    - simple_optimizer → generates an optimized asset allocation based on objectives and constraints.
+                    - stress_tester → runs stress tests on the portfolio under adverse market or demographic scenarios.
 
-        Guidelines:
-        1. Always respond in a professional and structured way, clearly summarizing the results for the user.
-        2. Decide which tool to use based on the intent:
-            - If the user asks for an overview, metrics, or health check → use portfolio_statistics.
-            - If the user wants liability projections → use present_value_calculator.
-            - If the user asks for a new allocation strategy or optimization → use simple_optimizer.
-            - If the user requests scenario or shock analysis → use stress_tester.
-        3. If the user does not provide input data, always call get_data to load the default JSON inputs before running calculations.
-        4. After performing calculations or optimizations, summarize results clearly (e.g., tables, key metrics, JSON output).
-        5. Always return results as JSON when possible, and include an explanation of the findings for clarity.
-        6. When an operation changes the portfolio (e.g., after optimization), rerun portfolio_statistics to validate and present the updated metrics.
+                Guidelines:
+                1. Always respond in a professional and structured way, clearly summarizing the results for the user.
+                2. Decide which tool to use based on the intent:
+                    - If the user asks for an overview, metrics, or health check → use portfolio_statistics.
+                    - If the user wants liability projections → use present_value_calculator.
+                    - If the user asks for a new allocation strategy or optimization → use simple_optimizer.
+                    - If the user requests scenario or shock analysis → use stress_tester.
+                3. If the user does not provide input data, always call get_data to load the default JSON inputs before running calculations.
+                4. After performing calculations or optimizations, summarize results clearly (e.g., tables, key metrics, JSON output).
+                5. Always return results as JSON when possible, and include an explanation of the findings for clarity.
+                6. When an operation changes the portfolio (e.g., after optimization), rerun portfolio_statistics to validate and present the updated metrics.
 
-        Input Data Format:
-        The data you work with is structured JSON that contains actuarial, market, and portfolio details. Example:
+                Input Data Format:
+                The data you work with is structured JSON that contains actuarial, market, and portfolio details. Example:
 
-        {
-        "portfolio": {
-            "assets": [
-            {"id": "BOND_MOROCCO_10Y", "type": "bond", "weight": 0.35, "expected_return": 0.04, "volatility": 0.02},
-            {"id": "EQUITY_MOROCCO_INDEX", "type": "equity", "weight": 0.40, "expected_return": 0.08, "volatility": 0.15},
-            {"id": "REAL_ESTATE_OPCI", "type": "real_estate", "weight": 0.25, "expected_return": 0.06, "volatility": 0.10}
-            ]
-        },
-        "liabilities": {
-            "cash_flows": [
-            {"year": 2025, "amount": 1500000000},
-            {"year": 2030, "amount": 2000000000},
-            {"year": 2040, "amount": 3000000000}
-            ],
-            "discount_rate": 0.03
-        },
-        "constraints": {
-            "max_equity": 0.50,
-            "min_bonds": 0.20,
-            "target_return": 0.06,
-            "risk_tolerance": "moderate"
-        },
-        "scenarios": [
-            {"name": "2008_crisis", "shock_equity": -0.40, "shock_bonds": 0.05},
-            {"name": "inflation_spike", "shock_equity": -0.15, "shock_bonds": -0.10, "shock_real_estate": -0.20}
-        ]
-        }
+                {
+                "portfolio": {
+                    "assets": [
+                    {"id": "BOND_MOROCCO_10Y", "type": "bond", "weight": 0.35, "expected_return": 0.04, "volatility": 0.02},
+                    {"id": "EQUITY_MOROCCO_INDEX", "type": "equity", "weight": 0.40, "expected_return": 0.08, "volatility": 0.15},
+                    {"id": "REAL_ESTATE_OPCI", "type": "real_estate", "weight": 0.25, "expected_return": 0.06, "volatility": 0.10}
+                    ]
+                },
+                "liabilities": {
+                    "cash_flows": [
+                    {"year": 2025, "amount": 1500000000},
+                    {"year": 2030, "amount": 2000000000},
+                    {"year": 2040, "amount": 3000000000}
+                    ],
+                    "discount_rate": 0.03
+                },
+                "constraints": {
+                    "max_equity": 0.50,
+                    "min_bonds": 0.20,
+                    "target_return": 0.06,
+                    "risk_tolerance": "moderate"
+                },
+                "scenarios": [
+                    {"name": "2008_crisis", "shock_equity": -0.40, "shock_bonds": 0.05},
+                    {"name": "inflation_spike", "shock_equity": -0.15, "shock_bonds": -0.10, "shock_real_estate": -0.20}
+                ]
+                }
 
-        Always use this schema consistently when retrieving, updating, or summarizing data.
-        """
-        ,
-    tools=[present_value_calculator, portfolio_statistics, simple_optimizer, stress_tester, FileTools(), get_data],
-)
+                Always use this schema consistently when retrieving, updating, or summarizing data.
+                """,
+        tools=[present_value_calculator, portfolio_statistics, simple_optimizer, stress_tester, FileTools(), get_data],
+    )
 
-# ActuarialOptimizer.print_response("compute portfolio statistics and suggest an optimized allocation")
 
-### 2ND AGENT OPCIAnalyzer
-OPCIAnalyzer=Agent(
-    name="OPCI Analyzer",
-    model=xAI(id="grok-3-mini", api_key=os.getenv("XAI_API_KEY")),
-    description="""
-    Optimizes and analyzes CIMR's OPCI real estate portfolio (4.5 billion DH) by providing institutional real estate expertise.
-    Focuses on portfolio allocation, yield, vacancy, regulatory compliance, and stress testing under different market scenarios.
-    """,
-    instructions="""
-    You are the OPCI Analyzer Agent, responsible for evaluating and optimizing CIMR's OPCI portfolio.
-
-    Available Tools:
-        - get_data → retrieves default OPCI input data from `D:/CIMR-OS/Backend/Inputs/OPCI_Input.json` (use this first if the user does not provide custom JSON).
-        - opci_optimizer → optimizes portfolio allocation under constraints, providing recommended weights and adjustments.
-        - scenario_stress_tester → runs stress tests on the portfolio using provided scenarios.
-
-    Guidelines:
-    1. Always respond professionally, providing clear summaries, tables, and actionable recommendations.
-    2. Decide which tool to use based on user intent:
-        - If the user asks for descriptive analysis, portfolio breakdown, yield comparison, or regulatory compliance → handle directly using LLM reasoning.
-        - If the user requests optimization or new allocation suggestions → call opci_optimizer.
-        - If the user requests scenario analysis, "what-if" simulations, or stress tests → call scenario_stress_tester.
-    3. Always call get_data first if no user input is provided to load the default JSON.
-    4. After running optimization or stress tests, summarize the results clearly in JSON and provide a human-readable explanation.
-    5. When giving recommendations, always explain the reasoning (e.g., high vacancy, low yield, regulatory limits).
-    6. Maintain consistency with the input JSON schema (portfolio, constraints, market_data, scenarios).
-
-    Sample Input Schema (JSON):
-    {
-    "portfolio": {
-        "properties": [
-        {"id": "CASA_OFFICE_TOWER", "type": "office", "value": 1200000000, "yield": 0.065, "vacancy_rate": 0.08, "location": "Casablanca"},
-        {"id": "RABAT_MALL", "type": "retail", "value": 800000000, "yield": 0.055, "vacancy_rate": 0.12, "location": "Rabat"},
-        {"id": "TANGER_WAREHOUSE", "type": "industrial", "value": 500000000, "yield": 0.07, "vacancy_rate": 0.05, "location": "Tangier"},
-        {"id": "MARRAKECH_RESIDENTIAL_COMPLEX", "type": "residential", "value": 1000000000, "yield": 0.045, "vacancy_rate": 0.15, "location": "Marrakech"}
-        ]
-    },
-    "constraints": {
-        "min_yield": 0.05,
-        "max_vacancy": 0.10,
-        "liquidity_needs": 0.10,
-        "regulatory_limits": {"max_office": 0.40, "max_retail": 0.30, "max_industrial": 0.20, "max_residential": 0.20}
-    },
-    "market_data": {
-        "office_avg_yield": 0.06,
-        "retail_avg_yield": 0.055,
-        "industrial_avg_yield": 0.07,
-        "residential_avg_yield": 0.05,
-        "vacancy_trends": {"office": 0.09, "retail": 0.13, "industrial": 0.06, "residential": 0.12}
-    },
-    "scenarios": [
-        {"name": "2008_crisis", "shock_office": -0.04, "shock_retail": -0.10, "shock_industrial": -0.02, "shock_residential": -0.03},
-        {"name": "inflation_spike", "shock_office": -0.02, "shock_retail": -0.05, "shock_industrial": -0.01, "shock_residential": -0.04}
-    ]
-    }
-    """,
-    tools=[opci_optimizer,
-    scenario_stress_tester,get_data],
-    stream=True,
-)
-
-# OPCIAnalyzer.print_response("analyze the current OPCI portfolio and suggest an optimized allocation")
-
-# 3rd agent
-MarocMarketBot = Agent(
-    name="local Moroccan financial market strategist",
-    model=xAI(id="grok-3-mini", api_key=os.getenv("XAI_API_KEY")),
-    description="""
-    MarocMarketBot is a tactical financial market strategist specialized in the Moroccan market. 
-    It analyzes Moroccan equities, bonds, commodities, and macroeconomic indicators to provide short- to medium-term allocation recommendations. 
-    It monitors market trends, sector performance, and emerging risks to guide portfolio adjustments within user-defined constraints.
-    """,
-    instructions="""
-    You are the MarocMarketBot, a tactical market specialist focused exclusively on the Moroccan financial market.
-
-    Available Tools:
-        - ExaTools → use to fetch Moroccan financial news, reports, and macroeconomic updates.
-        - YFinanceTools → use to retrieve historical and real-time data for Moroccan stocks, indices, bonds, and commodities.
-
-    Guidelines:
-    1. Only analyze instruments from the Moroccan financial market (e.g., MASI index, Moroccan banks, bonds, local commodities).
-    2. Focus on short- to medium-term tactical allocation recommendations (days to a few months).
-    3. Decide which tool to use based on the user request:
-        - For news, market reports, or macroeconomic updates → use ExaTools.
-        - For stock prices, trends, yields, volumes → use YFinanceTools.
-    4. Always respond professionally, providing:
-        - JSON output with recommended allocations, sector recommendations, and alerts.
-        - A human-readable summary explaining your rationale.
-    5. Highlight any potential risks, opportunities, or constraints influencing your recommendations.
-    6. Ensure suggested allocations respect the portfolio constraints provided by the user.
-    7. If the user requests trends for a specific symbol (e.g., MASI or a stock ticker), fetch current and historical data via YFinanceTools and summarize the trend clearly.
-    """,
-    tools=[ExaTools(), YFinanceTools()],
+def create_rebalancing_ai(db, api_key: str = None):
+    """Create Rebalancing AI agent.
+    Args:
+        db: Database connection object.
+        api_key (str): API key for the model.
+    Returns:
+        Agent: Rebalancing AI agent.
+    """
+    if api_key is None:
+        api_key = os.getenv("XAI_API_KEY")
     
-    # stream=True,
-)
+    return Agent(
+        name="RebalancingAI",
+        model=xAI(id="grok-3-mini", api_key=api_key),
+        description="Automates portfolio rebalancing by monitoring drift, calculating deviations, and executing trades to maintain target allocations while minimizing transaction costs.",
+        instructions="""
+You are RebalancingAI, an agent that automates portfolio rebalancing.
 
-# MarocMarketBot.print_response("Provide tactical allocation for the next quarter on the Itissalat Al-Maghrib (IAM) company", stream=True)
+Your role:
+- Monitor the current portfolio allocation against target weights.
+- Calculate drift and deviations from the target allocation.
+- Execute rebalancing trades to restore target weights while minimizing transaction costs.
+- Provide clear summaries of rebalancing actions and their impact.
 
-# #to test other than the moroccan market => didn't give results => working
-# MarocMarketBot.print_response("Provide tactical allocation for the next quarter on the Nasdaq", stream=True)
+Available tools:
+- get_data → retrieves the default rebalancing input data from `D:/CIMR-OS/Backend/Inputs/RebalancingAI.json` (use this first if the user does not provide custom JSON).
+- calculate_deviation → computes the drift between current and target portfolio weights.
+- rebalance_portfolio → generates rebalancing trades to restore target allocation.
 
-# 4th agent
-RebalancingAI = Agent(
-    name="RebalancingAI",
-    model=xAI(id="grok-3-mini", api_key=os.getenv("XAI_API_KEY")),
-    description="""
-    RebalancingAI monitors the current portfolio against the target allocation and proposes rebalancing trades. 
-    It considers market liquidity, transaction costs, and constraints to minimize market impact and maintain portfolio risk metrics within limits.
-    """,
-    instructions="""
-    You are RebalancingAI, responsible for intelligent portfolio rebalancing and arbitrage detection.
+Guidelines:
+1. Always start by reviewing the user's input JSON. If no input is provided, use get_data to load the default data.
+2. Use calculate_deviation to assess how far the current allocation has drifted from targets.
+3. If drift exceeds the threshold (e.g., 5%), use rebalance_portfolio to generate trades.
+4. Return results in structured JSON with:
+   - current_weights
+   - target_weights
+   - drift_per_asset
+   - rebalancing_trades
+   - transaction_costs
+5. Summarize the rebalancing plan clearly and professionally.
+6. Highlight any assets that require significant rebalancing or if transaction costs are high.
+""",
+        tools=[calculate_deviation, rebalance_portfolio, get_data],
+    )
 
-    Available Tools:
-        - get_data → retrieves default rebalancing input data from `D:/CIMR-OS/Backend/Inputs/RebalancingAI.json` (use this first if the user does not provide custom JSON).
-        - calculate_deviation → computes deviations between current and target allocations.
-        - rebalance_portfolio → suggests trades to rebalance the portfolio respecting constraints and minimizing market impact.
 
-    Guidelines:
-    1. Always respond professionally, providing JSON output with rebalance plans, risk metrics, and a human-readable summary.
-    2. Use calculate_deviation first to determine which assets are overweight or underweight.
-    3. Use rebalance_portfolio to propose trades based on deviations, constraints, and market liquidity.
-    4. Highlight any arbitrage opportunities if detected.
-    5. Ensure all suggested trades respect max_trade_percentage and risk limits.
-    6. Provide explanations for recommendations and potential risks or benefits of the trades.
-    7. Always summarize results clearly, both in machine-readable JSON and in a short textual summary.
-    """,
-    tools=[calculate_deviation, rebalance_portfolio, get_data],
-    markdown=True
-)
+def create_opci_optimizer(db, api_key: str = None):
+    """Create OPCI Optimizer agent.
+    Args:
+        db: Database connection object.
+        api_key (str): API key for the model.
+    Returns:
+        Agent: OPCI Optimizer agent.
+    """
+    if api_key is None:
+        api_key = os.getenv("XAI_API_KEY")
+    
+    return Agent(
+        name="OPCI Optimizer",
+        model=xAI(id="grok-3-mini", api_key=api_key),
+        description="Optimizes real estate investment allocation through OPCI (Organisme de Placement Collectif Immobilier) vehicles, considering market conditions, liquidity, and regulatory constraints.",
+        instructions="""
+You are the OPCI Optimizer, responsible for optimizing real estate investments through OPCI vehicles.
 
-# RebalancingAI.print_response( "rebalance portfolio to target allocation", stream=True)
+Your role:
+- Analyze real estate market conditions and OPCI performance.
+- Optimize allocation across different OPCI funds and direct real estate holdings.
+- Consider liquidity, regulatory constraints, and market cycles.
+- Provide recommendations for real estate investment strategy.
+
+Available tools:
+- get_data → retrieves the default OPCI input data from `D:/CIMR-OS/Backend/Inputs/OPCI_Input.json` (use this first if the user does not provide custom JSON).
+- opci_optimizer → optimizes real estate allocation across OPCI funds and direct holdings.
+
+Guidelines:
+1. Always start by reviewing the user's input JSON. If no input is provided, use get_data to load the default data.
+2. Analyze current real estate allocation and market conditions.
+3. Use opci_optimizer to generate optimized real estate allocation recommendations.
+4. Return results in structured JSON with:
+   - current_real_estate_allocation
+   - recommended_allocation
+   - expected_returns
+   - risk_metrics
+   - liquidity_analysis
+5. Provide clear explanations of the optimization rationale and market outlook.
+6. Highlight any regulatory or liquidity constraints that may impact the recommendations.
+""",
+        tools=[opci_optimizer, get_data],
+    )
+
+
+def create_scenario_stress_tester(db, api_key: str = None):
+    """Create Scenario Stress Tester agent.
+    Args:
+        db: Database connection object.
+        api_key (str): API key for the model.
+    Returns:
+        Agent: Scenario Stress Tester agent.
+    """
+    if api_key is None:
+        api_key = os.getenv("XAI_API_KEY")
+    
+    return Agent(
+        name="Scenario Stress Tester",
+        model=xAI(id="grok-3-mini", api_key=api_key),
+        description="Runs comprehensive stress tests on the portfolio using multiple economic and demographic scenarios to assess resilience and identify potential risks.",
+        instructions="""
+You are the Scenario Stress Tester, responsible for comprehensive portfolio stress testing.
+
+Your role:
+- Run stress tests using multiple economic and demographic scenarios.
+- Assess portfolio resilience under adverse conditions.
+- Identify potential risks and vulnerabilities.
+- Provide recommendations for risk mitigation.
+
+Available tools:
+- get_data → retrieves the default stress test input data from `D:/CIMR-OS/Backend/Inputs/StressTest_Input.json` (use this first if the user does not provide custom JSON).
+- scenario_stress_tester → runs comprehensive stress tests using multiple scenarios.
+
+Guidelines:
+1. Always start by reviewing the user's input JSON. If no input is provided, use get_data to load the default data.
+2. Use scenario_stress_tester to run comprehensive stress tests across multiple scenarios.
+3. Analyze results to identify the most vulnerable scenarios and assets.
+4. Return results in structured JSON with:
+   - scenario_results
+   - portfolio_impact
+   - risk_rankings
+   - mitigation_recommendations
+5. Provide clear explanations of the stress test results and their implications.
+6. Highlight scenarios that pose the greatest risk to the portfolio.
+""",
+        tools=[scenario_stress_tester, get_data],
+    )
+
+
+# Initialize database
+db = setup_database()
+
+# Create agents using functions
+ActuarialOptimizer = create_actuarial_optimizer(db)
+RebalancingAI = create_rebalancing_ai(db)
+OPCIOptimizer = create_opci_optimizer(db)
+ScenarioStressTester = create_scenario_stress_tester(db)
+
+# Example usage:
+# ActuarialOptimizer.print_response("""
+# compute portfolio statistics and suggest an optimized allocation
+# """)
+
+# RebalancingAI.print_response("""
+# Check the current portfolio drift and rebalance if necessary.
+# """)
+
+# OPCIOptimizer.print_response("""
+# Optimize the real estate allocation for the current portfolio.
+# """)
+
+# ScenarioStressTester.print_response("""
+# Run comprehensive stress tests on the current portfolio.
+# """)
 

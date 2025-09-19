@@ -1,0 +1,258 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Custom brand colors from user specification */
+    --first-color: 75 31% 85%;     /* #e1eacd - Light green background */
+    --second-color: 109 29% 77%;   /* #bad8b6 - Light green accent */
+    --third-color: 161 35% 54%;    /* #61b390 - Medium green highlight */
+    --fourth-color: 166 93% 11%;   /* #01352c - Dark green contrast */
+
+    /* Design system tokens */
+    --background: var(--first-color);
+    --foreground: var(--fourth-color);
+
+    --card: var(--second-color);
+    --card-foreground: var(--fourth-color);
+
+    --popover: var(--second-color);
+    --popover-foreground: var(--fourth-color);
+
+    --primary: var(--third-color);
+    --primary-foreground: var(--first-color);
+
+    --secondary: var(--second-color);
+    --secondary-foreground: var(--fourth-color);
+
+    --muted: var(--second-color);
+    --muted-foreground: 35 40% 60%;
+
+    --accent: var(--third-color);
+    --accent-foreground: var(--first-color);
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: var(--fourth-color);
+
+    --border: var(--second-color);
+    --input: var(--second-color);
+    --ring: var(--third-color);
+
+    --radius: 1rem;
+
+    --sidebar-background: 0 0% 98%;
+
+    --sidebar-foreground: 240 5.3% 26.1%;
+
+    --sidebar-primary: 240 5.9% 10%;
+
+    --sidebar-primary-foreground: 0 0% 98%;
+
+    --sidebar-accent: 240 4.8% 95.9%;
+
+    --sidebar-accent-foreground: 240 5.9% 10%;
+
+    --sidebar-border: 220 13% 91%;
+
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-feature-settings: 'liga', 'kern';
+  }
+}
+
+@layer utilities {
+  /* Custom brand color utilities */
+  .bg-first-color { background-color: hsl(var(--first-color)); }
+  .bg-second-color { background-color: hsl(var(--second-color)); }
+  .bg-third-color { background-color: hsl(var(--third-color)); }
+  .bg-fourth-color { background-color: hsl(var(--fourth-color)); }
+  
+  .text-first-color { color: hsl(var(--first-color)); }
+  .text-second-color { color: hsl(var(--second-color)); }
+  .text-third-color { color: hsl(var(--third-color)); }
+  .text-fourth-color { color: hsl(var(--fourth-color)); }
+
+  /* Animation utilities */
+  .transition-smooth { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+  
+  /* Markdown rendering utilities */
+  .prose {
+    @apply text-first-color;
+  }
+  
+  .prose h1, .prose h2, .prose h3, .prose h4, .prose h5, .prose h6 {
+    @apply text-fourth-color;
+  }
+  
+  .prose code {
+    background-color: hsl(var(--third-color) / 0.2);
+    @apply text-fourth-color px-1.5 py-0.5 rounded text-sm font-mono;
+  }
+  
+  .prose pre {
+    @apply bg-second-color rounded-lg p-4 overflow-x-auto;
+    border: 1px solid hsl(var(--third-color) / 0.2);
+  }
+  
+  .prose pre code {
+    @apply bg-transparent p-0 text-sm;
+  }
+  
+  .prose blockquote {
+    @apply pl-4 py-2 italic;
+    border-left: 4px solid hsl(var(--third-color));
+    background-color: hsl(var(--second-color) / 0.3);
+    color: hsl(var(--first-color) / 0.8);
+  }
+  
+  .prose table {
+    @apply border-collapse;
+    border: 1px solid hsl(var(--third-color) / 0.2);
+  }
+  
+  .prose th, .prose td {
+    @apply px-4 py-2;
+    border: 1px solid hsl(var(--third-color) / 0.2);
+  }
+  
+  .prose thead {
+    background-color: hsl(var(--third-color) / 0.1);
+  }
+  
+  .prose tbody tr:hover {
+    background-color: hsl(var(--second-color) / 0.2);
+  }
+  
+  /* Syntax highlighting overrides for better contrast */
+  .hljs {
+    @apply bg-second-color text-fourth-color;
+  }
+  
+  .hljs-comment,
+  .hljs-quote {
+    color: hsl(var(--fourth-color) / 0.6);
+  }
+  
+  .hljs-keyword,
+  .hljs-selector-tag,
+  .hljs-subst {
+    @apply text-third-color;
+  }
+  
+  .hljs-number,
+  .hljs-literal,
+  .hljs-variable,
+  .hljs-template-variable,
+  .hljs-tag .hljs-attr {
+    @apply text-third-color;
+  }
+  
+  .hljs-string,
+  .hljs-doctag {
+    @apply text-fourth-color;
+  }
+  
+  .hljs-title,
+  .hljs-section,
+  .hljs-selector-id {
+    @apply text-fourth-color font-semibold;
+  }
+  
+  .hljs-type,
+  .hljs-class .hljs-title {
+    @apply text-third-color;
+  }
+  
+  .hljs-tag,
+  .hljs-name,
+  .hljs-attribute {
+    @apply text-fourth-color;
+  }
+  
+  .hljs-regexp,
+  .hljs-link {
+    @apply text-third-color;
+  }
+  
+  .hljs-symbol,
+  .hljs-bullet {
+    @apply text-third-color;
+  }
+  
+  .hljs-built_in,
+  .hljs-builtin-name {
+    @apply text-third-color;
+  }
+  
+  .hljs-meta {
+    color: hsl(var(--fourth-color) / 0.6);
+  }
+  
+  .hljs-deletion {
+    @apply bg-red-100 text-red-800;
+  }
+  
+  .hljs-addition {
+    @apply bg-green-100 text-green-800;
+  }
+  
+  .hljs-emphasis {
+    @apply italic;
+  }
+  
+  .hljs-strong {
+    @apply font-semibold;
+  }
+}

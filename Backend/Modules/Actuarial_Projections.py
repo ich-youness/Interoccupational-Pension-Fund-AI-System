@@ -32,37 +32,65 @@ def get_data(path: str):
     """
     with open(path, "r") as f:
         return f.read()
+
+
+def setup_database(db_file: str = "tmp/agno.db"):
+    """Setup database connection.
+    Args:
+        db_file (str): Path to database file.
+    Returns:
+        SqliteDb: Database connection object.
+    """
+    return SqliteDb(db_file=db_file)
+
+
+def create_demographic_ai(db, api_key: str = None):
+    """Create Demographic AI agent.
+    Args:
+        db: Database connection object.
+        api_key (str): API key for the model.
+    Returns:
+        Agent: Demographic AI agent.
+    """
+    if api_key is None:
+        api_key = os.getenv("XAI_API_KEY")
     
-# agent 1
-DemographicAI = Agent(
-    name="DemographicAI",
-    model=xAI(id="grok-3-mini", api_key=os.getenv("XAI_API_KEY")),
-    description="""An AI specialized in demographic and actuarial projections. 
+    return Agent(
+        name="DemographicAI",
+        model=xAI(id="grok-3-mini", api_key=api_key),
+        description="""An AI specialized in demographic and actuarial projections. 
     It generates long-term population and affiliate forecasts up to the year 2100, 
     considering age structures, fertility, mortality, and longevity risks.""",
-    instructions="""Always produce structured demographic forecasts with clear breakdowns 
+        instructions="""Always produce structured demographic forecasts with clear breakdowns 
     (e.g., by age groups, dependency ratios). Focus on Morocco and international 
     benchmarks when useful. Provide both narrative explanations and data tables 
     when projecting. For uncertainty, present at least a baseline and one alternative 
     scenario (e.g., high longevity, low fertility).""",
-    # tools=[],
-    markdown=True,
-)
+        markdown=True,
+    )
 
 
-# DemographicAI.print_response( "Project the Moroccan population structure up to 2100,     showing age groups 0-14, 15-64, and 65+. Include a baseline and high-longevity scenario.")
-
-# agent 2
-PensionCalculator = Agent(
-    name="Pension Calculator",
-    model=xAI(id="grok-3-mini", api_key=os.getenv("XAI_API_KEY")),
-    description="""
+def create_pension_calculator(db, api_key: str = None):
+    """Create Pension Calculator agent.
+    Args:
+        db: Database connection object.
+        api_key (str): API key for the model.
+    Returns:
+        Agent: Pension Calculator agent.
+    """
+    if api_key is None:
+        api_key = os.getenv("XAI_API_KEY")
+    
+    return Agent(
+        name="Pension Calculator",
+        model=xAI(id="grok-3-mini", api_key=api_key),
+        description="""
     Automates pension benefit calculations for instant settlements.
     It computes monthly and annual pension entitlements, applies early retirement penalties,
     checks pension caps, and determines the present value of lifetime annuities
     based on demographic and financial assumptions.
     """,
-    instructions="""
+        instructions="""
     You have access to tools for calculating pensions and present value of annuities.
 
     Available tools:
@@ -82,40 +110,26 @@ PensionCalculator = Agent(
     5. Summarize results clearly and professionally, explaining how values were derived.
     6. If results exceed pension caps or violate rules, flag the issue with an "alert".
     """,
-    tools=[pension_benefit_calculator, present_value_annuity, get_data],
-)
+        tools=[pension_benefit_calculator, present_value_annuity, get_data],
+    )
 
-# PensionCalculator.print_response(
-#     """
-#     Calculate the pension entitlement and settlement value for the following case:
-#      {
-#         "service_years": 32,
-#         "final_avg_salary": 240000,
-#         "accrual_rate": 0.02,
-#         "retirement_age": 62,
-#         "early_retirement_penalty": 0.03,
-#         "pension_cap": 180000,
-#         "discount_rate": 0.04,
-#         "mortality_table": {
-#             "age_62": 0.98,
-#             "age_63": 0.97,
-#             "age_64": 0.96,
-#             "age_65": 0.95,
-#             "age_70": 0.90,
-#             "age_80": 0.70,
-#             "age_90": 0.40
-#         }
-#     }
-   
-#     """
-# )
 
-# agent 3
-ReserveOptimizer = Agent(
-    name="Reserve Optimizer",
-    model=xAI(id="grok-3-mini", api_key=os.getenv("XAI_API_KEY")),
-    description="Manages and optimizes CIMR’s provident reserve to maintain an optimal level of 40+ billion DH while balancing liabilities, returns, and risk.",
-    instructions="""
+def create_reserve_optimizer(db, api_key: str = None):
+    """Create Reserve Optimizer agent.
+    Args:
+        db: Database connection object.
+        api_key (str): API key for the model.
+    Returns:
+        Agent: Reserve Optimizer agent.
+    """
+    if api_key is None:
+        api_key = os.getenv("XAI_API_KEY")
+    
+    return Agent(
+        name="Reserve Optimizer",
+        model=xAI(id="grok-3-mini", api_key=api_key),
+        description="Manages and optimizes CIMR's provident reserve to maintain an optimal level of 40+ billion DH while balancing liabilities, returns, and risk.",
+        instructions="""
     You are the Reserve Optimizer for CIMR.
 
     Your role:
@@ -151,34 +165,30 @@ ReserveOptimizer = Agent(
 
     Always respond professionally, with both numbers and strategic advice.
     """,
-    tools=[get_data],
-)
+        tools=[get_data],
+    )
 
-# ReserveOptimizer.print_response("""
-# Evaluate the reserve sustainability with the following input:
-# {
-#   "current_reserve": 42000000000,
-#   "annual_inflows": 3200000000,
-#   "annual_outflows": 2800000000,
-#   "expected_return_rate": 0.04,
-#   "projection_horizon": 15
-# }
-# Provide both JSON projections and a clear recommendation.
-# """)
 
-from agno.agent import Agent
-from agno.models.xai import xAI
-import os
-
-ScenarioPlanner = Agent(
-    name="Scenario Planner",
-    model=xAI(id="grok-3-mini", api_key=os.getenv("XAI_API_KEY")),
-    description="""
+def create_scenario_planner(db, api_key: str = None):
+    """Create Scenario Planner agent.
+    Args:
+        db: Database connection object.
+        api_key (str): API key for the model.
+    Returns:
+        Agent: Scenario Planner agent.
+    """
+    if api_key is None:
+        api_key = os.getenv("XAI_API_KEY")
+    
+    return Agent(
+        name="Scenario Planner",
+        model=xAI(id="grok-3-mini", api_key=api_key),
+        description="""
     Generates strategic adaptation plans for the pension scheme by simulating multiple economic,
     demographic, and policy scenarios. Provides actionable recommendations to maintain fund resilience
     and meet regulatory and policy objectives.
     """,
-    instructions="""
+        instructions="""
 You are the Scenario Planner for CIMR's pension scheme.
 
 Your role:
@@ -207,7 +217,64 @@ Guidelines:
    - Professional executive summary highlighting key risks and suggested adaptations
 6. Present results clearly and concisely for decision-makers.
 """
-)
+    )
+
+
+# Initialize database
+db = setup_database()
+
+# Create agents using functions
+DemographicAI = create_demographic_ai(db)
+
+
+# DemographicAI.print_response( "Project the Moroccan population structure up to 2100,     showing age groups 0-14, 15-64, and 65+. Include a baseline and high-longevity scenario.")
+
+PensionCalculator = create_pension_calculator(db)
+
+# PensionCalculator.print_response(
+#     """
+#     Calculate the pension entitlement and settlement value for the following case:
+#      {
+#         "service_years": 32,
+#         "final_avg_salary": 240000,
+#         "accrual_rate": 0.02,
+#         "retirement_age": 62,
+#         "early_retirement_penalty": 0.03,
+#         "pension_cap": 180000,
+#         "discount_rate": 0.04,
+#         "mortality_table": {
+#             "age_62": 0.98,
+#             "age_63": 0.97,
+#             "age_64": 0.96,
+#             "age_65": 0.95,
+#             "age_70": 0.90,
+#             "age_80": 0.70,
+#             "age_90": 0.40
+#         }
+#     }
+   
+#     """
+# )
+
+ReserveOptimizer = create_reserve_optimizer(db)
+
+# ReserveOptimizer.print_response("""
+# Evaluate the reserve sustainability with the following input:
+# {
+#   "current_reserve": 42000000000,
+#   "annual_inflows": 3200000000,
+#   "annual_outflows": 2800000000,
+#   "expected_return_rate": 0.04,
+#   "projection_horizon": 15
+# }
+# Provide both JSON projections and a clear recommendation.
+# """)
+
+from agno.agent import Agent
+from agno.models.xai import xAI
+import os
+
+ScenarioPlanner = create_scenario_planner(db)
 
 # ScenarioPlanner.print_response("""
 # Simulate the following scenarios for the pension fund:
