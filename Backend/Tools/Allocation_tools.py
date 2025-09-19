@@ -423,3 +423,54 @@ def mortality_shock_calculator(data: Dict[str, Any]) -> str:
         results[f"mortality_shock_{shock}%"] = adjusted
 
     return json.dumps(results)
+
+
+##### 3rd Module
+@tool(name="pension_benefit_calculator", description="Calculate pension benefit based on accrual rate, service years, and final salary.")
+def pension_benefit_calculator(data: Dict[str, Any]) -> str:
+    """
+    Formula:
+    Pension = accrual_rate × years_of_service × final_average_salary
+    Apply early retirement penalty if retirement age < normal retirement age.
+    Apply pension cap if pension exceeds maximum allowed.
+    """
+    participant = data["participant"]
+    rules = data["plan_rules"]
+
+    base_pension = rules["accrual_rate"] * participant["years_of_service"] * participant["final_average_salary"]
+
+    # Early retirement penalty
+    penalty = 0
+    if participant["retirement_age"] < rules["normal_retirement_age"]:
+        years_early = rules["normal_retirement_age"] - participant["retirement_age"]
+        penalty = years_early * rules["early_retirement_penalty"]
+        base_pension *= (1 - penalty)
+
+    # Pension cap
+    if base_pension > rules["pension_cap"]:
+        base_pension = rules["pension_cap"]
+
+    return json.dumps({
+        "monthly_pension": round(base_pension / 12, 2),
+        "annual_pension": round(base_pension, 2),
+        "penalty_applied": round(penalty, 2)
+    })
+
+
+@tool(name="present_value_annuity", description="Calculate present value of lifetime pension annuity.")
+def present_value_annuity(data: Dict[str, Any]) -> str:
+    """
+    Formula:
+    PV = Annual Pension × (1 - (1 + discount_rate)^(-life_expectancy)) / discount_rate
+    Uses mortality life expectancy for annuity length.
+    """
+    pension = data["pension"]["annual_pension"]
+    discount_rate = data["financials"]["discount_rate"]
+    life_expectancy = data["financials"]["mortality_table"]["life_expectancy"]
+
+    pv = pension * (1 - (1 + discount_rate) ** (-life_expectancy)) / discount_rate
+
+    return json.dumps({
+        "present_value": round(pv, 2)
+    })
+

@@ -1,0 +1,22 @@
+{
+  "current_reserve": 41200000000,
+  "target_reserve": 40000000000,
+  "expected_liabilities": {
+    "1_year": 3500000000,
+    "5_year": 15000000000,
+    "30_year": 80000000000
+  },
+  "investment_returns": {
+    "equity": 0.07,
+    "bonds": 0.03,
+    "real_estate": 0.05
+  },
+  "cashflows": {
+    "annual_contributions": 5000000000,
+    "annual_benefits": 4500000000
+  },
+  "constraints": {
+    "min_liquidity_ratio": 0.10,
+    "max_equity_allocation": 0.50
+  }
+}

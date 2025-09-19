@@ -1,0 +1,23 @@
+{
+  "participant": {
+    "name": "Ahmed Benali",
+    "age": 62,
+    "gender": "M",
+    "years_of_service": 28,
+    "final_average_salary": 180000,
+    "retirement_age": 62
+  },
+  "plan_rules": {
+    "accrual_rate": 0.02,
+    "early_retirement_penalty": 0.05,
+    "normal_retirement_age": 60,
+    "pension_cap": 100000,
+    "survivor_benefit_rate": 0.5
+  },
+  "financials": {
+    "discount_rate": 0.03,
+    "mortality_table": {
+      "life_expectancy": 20
+    }
+  }
+}
