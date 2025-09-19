@@ -19,34 +19,34 @@ import {
 
 const teams = [
   { 
-    id: "acaps_compliance", 
-    name: "ACAPS Compliance Module", 
-    icon: Shield, 
-    description: "AI-powered regulatory compliance and reporting for pension fund management" 
-  },
-  { 
-    id: "member_relations", 
-    name: "Member Relations Module", 
-    icon: Users, 
-    description: "AI-powered member services, pension simulation, and fraud detection" 
+    id: "allocation_optimization", 
+    name: "Allocation & Optimisation Portefeuille", 
+    icon: PieChart, 
+    description: "AI-powered portfolio optimization, rebalancing, and OPCI management" 
   },
   { 
     id: "financial_risk", 
-    name: "Financial Risk Management Module", 
+    name: "Gestion Risques Financiers", 
     icon: TrendingDown, 
     description: "AI-powered risk assessment, stress testing, and financial analysis" 
   },
   { 
     id: "actuarial_projections", 
-    name: "Actuarial Projections Module", 
+    name: "Actuariat & Projections", 
     icon: ChartBar, 
     description: "AI-powered demographic analysis, pension calculations, and reserve optimization" 
   },
   { 
-    id: "allocation_optimization", 
-    name: "Allocation Optimization Module", 
-    icon: PieChart, 
-    description: "AI-powered portfolio optimization, rebalancing, and OPCI management" 
+    id: "member_relations", 
+    name: "Relation Adhérents", 
+    icon: Users, 
+    description: "AI-powered member services, pension simulation, and fraud detection" 
+  },
+  { 
+    id: "acaps_compliance", 
+    name: "Conformité ACAPS", 
+    icon: Shield, 
+    description: "AI-powered regulatory compliance and reporting for pension fund management" 
   }
 ];
 

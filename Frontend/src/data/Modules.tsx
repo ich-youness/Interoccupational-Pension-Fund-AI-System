@@ -57,7 +57,7 @@ export interface Team {
 // ACAPS Compliance Module
 export const acapsComplianceTeam: Team = {
   id: "acaps_compliance",
-  name: "ACAPS Compliance Module",
+  name: "Conformité ACAPS",
   description: "AI-powered regulatory compliance and reporting for pension fund management",
   icon: Shield,
   subTeams: [
@@ -137,7 +137,7 @@ export const acapsComplianceTeam: Team = {
 // Member Relations Module
 export const memberRelationsTeam: Team = {
   id: "member_relations",
-  name: "Member Relations Module",
+  name: "Relation Adhérents",
   description: "AI-powered member services, pension simulation, and fraud detection",
   icon: Users,
   subTeams: [
@@ -217,7 +217,7 @@ export const memberRelationsTeam: Team = {
 // Financial Risk Management Module
 export const financialRiskTeam: Team = {
   id: "financial_risk",
-  name: "Financial Risk Management Module",
+  name: "Gestion Risques Financiers",
   description: "AI-powered risk assessment, stress testing, and financial analysis",
   icon: TrendingDown,
   subTeams: [
@@ -297,7 +297,7 @@ export const financialRiskTeam: Team = {
 // Actuarial Projections Module
 export const actuarialProjectionsTeam: Team = {
   id: "actuarial_projections",
-  name: "Actuarial Projections Module",
+  name: "Actuariat & Projections",
   description: "AI-powered demographic analysis, pension calculations, and reserve optimization",
   icon: ChartBar,
   subTeams: [
@@ -377,7 +377,7 @@ export const actuarialProjectionsTeam: Team = {
 // Allocation Optimization Module
 export const allocationOptimizationTeam: Team = {
   id: "allocation_optimization",
-  name: "Allocation Optimization Module",
+  name: "Allocation & Optimisation Portefeuille",
   description: "AI-powered portfolio optimization, rebalancing, and OPCI management",
   icon: PieChartIcon,
   subTeams: [
@@ -530,9 +530,9 @@ export const allocationOptimizationTeam: Team = {
 // };
 
 export const allTeams = [
-  acapsComplianceTeam,
-  memberRelationsTeam,
+  allocationOptimizationTeam,
   financialRiskTeam,
   actuarialProjectionsTeam,
-  allocationOptimizationTeam
+  memberRelationsTeam,
+  acapsComplianceTeam
 ];
