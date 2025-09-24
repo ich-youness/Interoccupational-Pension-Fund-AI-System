@@ -81,7 +81,7 @@ Your tasks are:
 
 agent= create_claim_classifier()
 
-agent.print_response("Mon employeur ABC SARL n’a pas déclaré mes cotisations pour la période 2019-2021. Je réclame ces cotisations manquantes.")
+# agent.print_response("Mon employeur ABC SARL n’a pas déclaré mes cotisations pour la période 2019-2021. Je réclame ces cotisations manquantes.")
 
 ### 2nd agent
 
