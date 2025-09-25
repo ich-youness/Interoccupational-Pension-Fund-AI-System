@@ -51,7 +51,7 @@ def create_claim_classifier():
     return Agent(
         name="ClaimClassifierAgent",
       #   model=xAI(id="grok-3-mini", api_key=os.getenv("XAI_API_KEY")),
-         model=Gemini(id="gemini-1.5-flash", api_key="AIzaSyDlD0tDvunUrWCeqQGg-SQ1zr7twgR4hBA"),
+         model=Gemini(id="gemini-1.5-flash", api_key=os.getenv("GEMINI_API_KEY")),
         description="Classifies incoming CIMR claims from text or images and stores them in database",
         instructions="""
       You are a CIMR claim classifier. Follow these steps EXACTLY:
@@ -226,4 +226,4 @@ if __name__ == "__main__":
     # Asynchronously add the content of the PDF file to the knowledge.
 
     # Create and use the agent
-    eligibility_agent.print_response("Please verify the eligibility of claim CIMR-0001", stream=True)
+    eligibility_agent.print_response("Please verify the eligibility of claim CIMR-12345", stream=True)
