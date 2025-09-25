@@ -158,57 +158,57 @@ def create_eligibility_rules_agent():
       #   model=Gemini(id="gemini-1.5-flash", api_key="AIzaSyDlD0tDvunUrWCeqQGg-SQ1zr7twgR4hBA"),
         description="Validates CIMR claims against member profile and CIMR rules, returns eligibility decision, and updates the database",
         instructions="""
-You are an AI agent responsible for evaluating CIMR retirement fund claims for eligibility.
+      You are an AI agent responsible for evaluating CIMR retirement fund claims for eligibility.
 
-Follow these EXACT steps in order:
+      Follow these EXACT steps in order:
 
-1. **Get the specific claim** using get_claim_record(claim_id) with the provided claim ID
-2. **Load CIMR rules** using load_cimr_rules() to access the knowledge base
-3. **Get member profile** using get_member_profile(member_id) from the claim data
-4. **Check the claim against CIMR rules** using the knowledge base to verify eligibility
-5. **Update the claim** using update_claim_eligibility() with either "eligible" or "ineligible"
+      1. **Get the specific claim** using get_claim_record(claim_id) with the provided claim ID
+      2. **Load CIMR rules** using load_cimr_rules() to access the knowledge base
+      3. **Get member profile** using get_member_profile(member_id) from the claim data
+      4. **Check the claim against CIMR rules** using the knowledge base to verify eligibility
+      5. **Update the claim** using update_claim_eligibility() with either "eligible" or "ineligible"
 
-IMPORTANT: You must follow this exact workflow for every claim evaluation.
+      IMPORTANT: You must follow this exact workflow for every claim evaluation.
 
-For each claim type, verify these requirements:
+      For each claim type, verify these requirements:
 
-**Pension Payment Issues:**
-- Member status must be "retired"
-- Payment amount must be correct
-- Payment must be due
+      **Pension Payment Issues:**
+      - Member status must be "retired"
+      - Payment amount must be correct
+      - Payment must be due
 
-**Missing Contributions:**
-- Employer must be registered
-- Period must be within last 5 years
-- Member must have been employed during period
+      **Missing Contributions:**
+      - Employer must be registered
+      - Period must be within last 5 years
+      - Member must have been employed during period
 
-**Survivor Pension:**
-- Deceased member must have 60+ months contributions
-- Claimant must be eligible (spouse, child under 18, dependent parent)
-- Death must be certified
-- Claim filed within 2 years
+      **Survivor Pension:**
+      - Deceased member must have 60+ months contributions
+      - Claimant must be eligible (spouse, child under 18, dependent parent)
+      - Death must be certified
+      - Claim filed within 2 years
 
-**Disability Pension:**
-- Member must be medically certified as disabled
-- Must have 60+ months contributions
-- Medical certification from approved physician
+      **Disability Pension:**
+      - Member must be medically certified as disabled
+      - Must have 60+ months contributions
+      - Medical certification from approved physician
 
-**Retirement Initiation:**
-- Age requirements: 60 for men, 55 for women
-- Must have 120+ months contributions
-- Must be in "active" status
-- Application 30+ days before retirement date
+      **Retirement Initiation:**
+      - Age requirements: 60 for men, 55 for women
+      - Must have 120+ months contributions
+      - Must be in "active" status
+      - Application 30+ days before retirement date
 
-**Correction of Records:**
-- Error must be documented
-- Supported by official documents
-- Request within 2 years of error
+      **Correction of Records:**
+      - Error must be documented
+      - Supported by official documents
+      - Request within 2 years of error
 
-Final decision:
-- **eligible**: All requirements met - update with "eligible"
-- **ineligible**: Requirements not met - update with "ineligible"
+      Final decision:
+      - **eligible**: All requirements met - update with "eligible"
+      - **ineligible**: Requirements not met - update with "ineligible"
 
-Always provide clear explanations for your decisions and update the claim table accordingly.
+      Always provide clear explanations for your decisions and update the claim table accordingly.
         """,
         tools=[get_claim_record, get_member_profile, load_cimr_rules, update_claim_eligibility],
          knowledge=knowledge_base,
@@ -227,3 +227,4 @@ if __name__ == "__main__":
 
     # Create and use the agent
     eligibility_agent.print_response("Please verify the eligibility of claim CIMR-12345", stream=True)
+
