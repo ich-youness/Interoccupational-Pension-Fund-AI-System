@@ -50,8 +50,8 @@ def create_claim_classifier():
     """
     return Agent(
         name="ClaimClassifierAgent",
-      #   model=xAI(id="grok-3-mini", api_key=os.getenv("XAI_API_KEY")),
-         model=Gemini(id="gemini-1.5-flash", api_key=os.getenv("GEMINI_API_KEY")),
+        # model=xAI(id="grok-3-mini", api_key=os.getenv("XAI_API_KEY")),
+         model=Gemini(id="gemini-2.0-flash", api_key=os.getenv("GEMINI_API_KEY_2")),
         description="Classifies incoming CIMR claims from text or images and stores them in database",
         instructions="""
       You are a CIMR claim classifier. Follow these steps EXACTLY:
@@ -77,7 +77,7 @@ def create_claim_classifier():
 
       You should call:
       create_claim_record({
-      "claim_id": "CIMR-12345",
+      
       "member_id": "M001", 
       "claim_type": "missing_contribution",
       "confidence": 0.9,
@@ -86,6 +86,8 @@ def create_claim_classifier():
       }, "Mon employeur ABC SARL n'a pas déclaré mes cotisations pour la période 2019-2021. Je réclame ces cotisations manquantes.")
 
       DO NOT call create_claim_record with empty data. Always create the complete dictionary first.
+
+      as a response, return the claim_id, and message saying Claim created successfully
         """,
         tools=[create_claim_record, ReasoningTools()],  # Add the database storage tool
         stream=True,
@@ -134,24 +136,21 @@ claim_classifier_agent = create_claim_classifier()
 # Agent_test.print_response("ou ce trouve la Caisse Interprofessionnelle Marocaine de Retraite?", stream=True)
 
 
-vector_db = LanceDb(
-    table_name="my_markdown_knowledge",  # Name for your knowledge base table
-    uri="tmp/agno_lancedb",  # Path where the database will be stored locally
-    embedder=GeminiEmbedder(),
-
-)
-# 2. Configure the Knowledge Base with your Markdown file
-knowledge_base = Knowledge(
-    vector_db=vector_db,
-
-)
-knowledge_base.add_content(
-    path="D:/CIMR-OS/Backend/Inputs/CIMR_Rules.md",
-)
 def create_eligibility_rules_agent():
     """
     Creates an AI agent to validate CIMR claims against rules and member profiles.
     """
+    # Configure the Knowledge Base (lazy initialization)
+    vector_db = LanceDb(
+        table_name="my_markdown_knowledge",  # Name for your knowledge base table
+        uri="tmp/agno_lancedb",  # Path where the database will be stored locally
+        embedder=GeminiEmbedder(),
+    )
+    
+    knowledge_base = Knowledge(vector_db=vector_db)
+    # Note: add_content will be called when the agent is first used
+    # This avoids the async error during module import
+    
     return Agent(
         name="EligibilityRulesAgent",
         model=xAI(id="grok-3-mini", api_key=os.getenv("XAI_API_KEY")),

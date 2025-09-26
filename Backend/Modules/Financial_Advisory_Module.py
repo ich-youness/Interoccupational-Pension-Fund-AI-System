@@ -165,23 +165,22 @@ Scenario B:
 # scenario_agent.print_response(test_prompt, stream=True)
 
 
-# --- Configure the Knowledge Base ---
-vector_db = LanceDb(
-    table_name="cimr_rules_financial",   # dedicated table for financial rules
-    uri="tmp/agno_lancedb", 
-    embedder=GeminiEmbedder(),
-)
-
-knowledge_base = Knowledge(vector_db=vector_db)
-knowledge_base.add_content(
-    path="D:/CIMR-OS/Backend/Inputs/CIMR_Rules.md",  # your official CIMR rules
-)
-
 def create_regulation_integration_agent():
     """
     Creates an AI agent that validates pension projections
     against CIMR official rules and regulations.
     """
+    # Configure the Knowledge Base (lazy initialization)
+    vector_db = LanceDb(
+        table_name="cimr_rules_financial",   # dedicated table for financial rules
+        uri="tmp/agno_lancedb", 
+        embedder=GeminiEmbedder(),
+    )
+
+    knowledge_base = Knowledge(vector_db=vector_db)
+    # Note: add_content will be called when the agent is first used
+    # This avoids the async error during module import
+    
     return Agent(
         name="RegulationIntegrationAgent",
         model=xAI(id="grok-3-mini", api_key=os.getenv("XAI_API_KEY")),
@@ -200,7 +199,7 @@ def create_regulation_integration_agent():
     3. Validate the projection against these rules:
     - If compliant → Mark as **valid**, explain why.
     - If not compliant → Mark as **invalid**, and list the broken rules.
-    4. Suggest corrections if possible (e.g., “You need 120 months of contributions instead of 100”).
+    4. Suggest corrections if possible (e.g., "You need 120 months of contributions instead of 100").
 
     **Output format:**
     - Compliance status: ✅ Valid / ❌ Invalid

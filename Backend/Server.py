@@ -49,6 +49,21 @@ from Modules.Allocation_Optimization_Portfolio import (
     setup_database as setup_allocation_db
 )
 
+from Modules.Financial_Advisory_Module import (
+    create_projection_agent,
+    create_scenario_comparison_agent,
+    create_regulation_integration_agent,
+    create_financial_advisory_agent,
+    create_visualization_agent,
+    setup_database as setup_financial_advisory_db
+)
+
+from Modules.Reclamation_Module import (
+    create_claim_classifier,
+    create_eligibility_rules_agent,
+    setup_database as setup_reclamation_db
+)
+
 load_dotenv()
 
 # Configure logging
@@ -75,7 +90,7 @@ app = FastAPI(
 # Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:8080"],
+    allow_origins=["http://localhost:8080", "http://localhost:3000", "http://127.0.0.1:8080", "http://127.0.0.1:3000"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -158,6 +173,28 @@ opci_optimizer = create_opci_optimizer(allocation_db)
 agent_logger.info("Creating Scenario Stress Tester agent...")
 scenario_stress_tester = create_scenario_stress_tester(allocation_db)
 
+# Financial Advisory Module
+api_logger.info("Setting up Financial Advisory Module...")
+financial_advisory_db = setup_financial_advisory_db("tmp/financial_advisory.db")
+agent_logger.info("Creating Projection Agent...")
+projection_agent = create_projection_agent()
+agent_logger.info("Creating Scenario Comparison Agent...")
+scenario_comparison_agent = create_scenario_comparison_agent()
+agent_logger.info("Creating Regulation Integration Agent...")
+regulation_integration_agent = create_regulation_integration_agent()
+agent_logger.info("Creating Financial Advisory Agent...")
+financial_advisory_agent = create_financial_advisory_agent()
+agent_logger.info("Creating Visualization Agent...")
+visualization_agent = create_visualization_agent()
+
+# Reclamation Module
+api_logger.info("Setting up Reclamation Module...")
+reclamation_db = setup_reclamation_db("tmp/reclamation.db")
+agent_logger.info("Creating Claim Classifier agent...")
+claim_classifier = create_claim_classifier()
+agent_logger.info("Creating Eligibility Rules Agent...")
+eligibility_rules_agent = create_eligibility_rules_agent()
+
 api_logger.info("All modules initialized successfully!")
 
 # Agent mapping for easy access
@@ -191,6 +228,17 @@ AGENTS = {
         "rebalancing_ai": rebalancing_ai,
         "opci_optimizer": opci_optimizer,
         "scenario_stress_tester": scenario_stress_tester
+    },
+    "financial_advisory": {
+        "projection_agent": projection_agent,
+        "scenario_comparison_agent": scenario_comparison_agent,
+        "regulation_integration_agent": regulation_integration_agent,
+        "financial_advisory_agent": financial_advisory_agent,
+        "visualization_agent": visualization_agent
+    },
+    "reclamation": {
+        "claim_classifier": claim_classifier,
+        "eligibility_rules_agent": eligibility_rules_agent
     }
 }
 
@@ -208,6 +256,12 @@ async def root():
 async def health_check():
     return {"status": "healthy", "message": "All systems operational"}
 
+# Test endpoint for debugging
+@app.get("/test")
+async def test_endpoint():
+    api_logger.info("Test endpoint called")
+    return {"message": "Test endpoint working", "timestamp": datetime.now().isoformat()}
+
 # Get available modules and agents
 @app.get("/modules")
 async def get_modules():
@@ -224,7 +278,10 @@ async def query_agent(request: QueryRequest):
     start_time = datetime.now()
     request_id = f"{request.module}_{request.agent}_{start_time.strftime('%Y%m%d_%H%M%S')}"
     
-    api_logger.info(f"[{request_id}] Received query request - Module: {request.module}, Agent: {request.agent}")
+    api_logger.info(f"[{request_id}] ===== NEW REQUEST RECEIVED =====")
+    api_logger.info(f"[{request_id}] Module: {request.module}")
+    api_logger.info(f"[{request_id}] Agent: {request.agent}")
+    api_logger.info(f"[{request_id}] Query: {request.query[:100]}{'...' if len(request.query) > 100 else ''}")
     agent_logger.info(f"[{request_id}] Query: {request.query[:100]}{'...' if len(request.query) > 100 else ''}")
     
     try:
@@ -432,6 +489,57 @@ async def scenario_stress_tester_query(request: QueryRequest):
     api_logger.info(f"Scenario Stress Tester endpoint called - Query: {request.query[:50]}...")
     request.module = "allocation_optimization"
     request.agent = "scenario_stress_tester"
+    return await query_agent(request)
+
+# Financial Advisory endpoints
+@app.post("/financial-advisory/projection")
+async def projection_agent_query(request: QueryRequest):
+    api_logger.info(f"Projection Agent endpoint called - Query: {request.query[:50]}...")
+    request.module = "financial_advisory"
+    request.agent = "projection_agent"
+    return await query_agent(request)
+
+@app.post("/financial-advisory/scenario-comparison")
+async def scenario_comparison_agent_query(request: QueryRequest):
+    api_logger.info(f"Scenario Comparison Agent endpoint called - Query: {request.query[:50]}...")
+    request.module = "financial_advisory"
+    request.agent = "scenario_comparison_agent"
+    return await query_agent(request)
+
+@app.post("/financial-advisory/regulation-integration")
+async def regulation_integration_agent_query(request: QueryRequest):
+    api_logger.info(f"Regulation Integration Agent endpoint called - Query: {request.query[:50]}...")
+    request.module = "financial_advisory"
+    request.agent = "regulation_integration_agent"
+    return await query_agent(request)
+
+@app.post("/financial-advisory/advisory")
+async def financial_advisory_agent_query(request: QueryRequest):
+    api_logger.info(f"Financial Advisory Agent endpoint called - Query: {request.query[:50]}...")
+    request.module = "financial_advisory"
+    request.agent = "financial_advisory_agent"
+    return await query_agent(request)
+
+@app.post("/financial-advisory/visualization")
+async def visualization_agent_query(request: QueryRequest):
+    api_logger.info(f"Visualization Agent endpoint called - Query: {request.query[:50]}...")
+    request.module = "financial_advisory"
+    request.agent = "visualization_agent"
+    return await query_agent(request)
+
+# Reclamation endpoints
+@app.post("/reclamation/claim-classifier")
+async def claim_classifier_query(request: QueryRequest):
+    api_logger.info(f"Claim Classifier endpoint called - Query: {request.query[:50]}...")
+    request.module = "reclamation"
+    request.agent = "claim_classifier"
+    return await query_agent(request)
+
+@app.post("/reclamation/eligibility-rules")
+async def eligibility_rules_agent_query(request: QueryRequest):
+    api_logger.info(f"Eligibility Rules Agent endpoint called - Query: {request.query[:50]}...")
+    request.module = "reclamation"
+    request.agent = "eligibility_rules_agent"
     return await query_agent(request)
 
 # Run the server

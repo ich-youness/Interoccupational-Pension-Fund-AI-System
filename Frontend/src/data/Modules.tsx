@@ -26,7 +26,13 @@ import {
   AlertCircle,
   TrendingDown,
   PieChart as PieChartIcon,
-  Target as TargetIcon
+  Target as TargetIcon,
+  MessageSquare,
+  FileCheck,
+  BarChart,
+  Image,
+  ClipboardList,
+  Search
 } from "lucide-react";
 
 export interface Agent {
@@ -454,6 +460,144 @@ export const allocationOptimizationTeam: Team = {
   ]
 };
 
+// Financial Advisory Module
+export const financialAdvisoryTeam: Team = {
+  id: "financial_advisory",
+  name: "Conseil Financier",
+  description: "AI-powered financial advisory, pension projections, and visualization services",
+  icon: DollarSign,
+  subTeams: [
+    {
+      id: "pension-projections",
+      name: "Projections de Pension",
+      description: "Pension projection and scenario analysis services",
+      mode: "Coordinate",
+      icon: BarChart,
+      agents: [
+        {
+          id: "projection_agent",
+          name: "Projection Agent",
+          description: "AI agent that calculates pension projections based on member profiles, salary, contribution years, and retirement age. Provides accurate pension estimates and financial planning insights.",
+          icon: Calculator,
+          outputs: [
+            "Pension Projections",
+            "Retirement Calculations",
+            "Financial Estimates",
+            "Contribution Analysis",
+            "Projection Reports"
+          ]
+        },
+        {
+          id: "scenario_comparison_agent",
+          name: "Scenario Comparison Agent",
+          description: "Advanced scenario comparison agent that analyzes multiple pension projection scenarios and highlights key differences to help members make informed decisions.",
+          icon: BarChart3,
+          outputs: [
+            "Scenario Comparisons",
+            "Analysis Reports",
+            "Decision Support",
+            "Comparative Analysis",
+            "Recommendation Summaries"
+          ]
+        }
+      ]
+    },
+    {
+      id: "advisory-visualization",
+      name: "Conseil & Visualisation",
+      description: "Financial advisory and data visualization services",
+      mode: "Coordinate",
+      icon: MessageSquare,
+      agents: [
+        {
+          id: "regulation_integration_agent",
+          name: "Regulation Integration Agent",
+          description: "AI agent that validates pension projections against CIMR official rules and regulations, ensuring compliance and accuracy of financial calculations.",
+          icon: FileCheck,
+          outputs: [
+            "Compliance Validation",
+            "Regulatory Checks",
+            "Rule Verification",
+            "Compliance Reports",
+            "Regulatory Guidance"
+          ]
+        },
+        {
+          id: "financial_advisory_agent",
+          name: "Financial Advisory Agent",
+          description: "Personalized financial advisory agent that provides actionable pension advice based on projections, comparisons, and member goals.",
+          icon: MessageSquare,
+          outputs: [
+            "Financial Advice",
+            "Strategic Recommendations",
+            "Planning Guidance",
+            "Action Plans",
+            "Advisory Reports"
+          ]
+        },
+        {
+          id: "visualization_agent",
+          name: "Visualization Agent",
+          description: "Data visualization agent that transforms pension projections and advisory results into clear charts, graphs, and visual reports.",
+          icon: Image,
+          outputs: [
+            "Visual Charts",
+            "Graph Reports",
+            "Data Visualizations",
+            "Interactive Dashboards",
+            "Visual Summaries"
+          ]
+        }
+      ]
+    }
+  ]
+};
+
+// Reclamation Module
+export const reclamationTeam: Team = {
+  id: "reclamation",
+  name: "Gestion des Réclamations",
+  description: "AI-powered claim processing, classification, and eligibility verification",
+  icon: ClipboardList,
+  subTeams: [
+    {
+      id: "claim-processing",
+      name: "Traitement des Réclamations",
+      description: "Automated claim classification and processing",
+      mode: "Coordinate",
+      icon: Search,
+      agents: [
+        {
+          id: "claim_classifier",
+          name: "Claim Classifier",
+          description: "Intelligent claim classification agent that automatically categorizes incoming CIMR claims and extracts key information for processing.",
+          icon: Search,
+          outputs: [
+            "Claim Classifications",
+            "Category Assignments",
+            "Entity Extraction",
+            "Confidence Scores",
+            "Processing Recommendations"
+          ]
+        },
+        {
+          id: "eligibility_rules_agent",
+          name: "Eligibility Rules Agent",
+          description: "AI agent that validates CIMR claims against member profiles and official rules, determining eligibility and updating claim status.",
+          icon: CheckCircle,
+          outputs: [
+            "Eligibility Decisions",
+            "Rule Validations",
+            "Status Updates",
+            "Compliance Checks",
+            "Decision Explanations"
+          ]
+        }
+      ]
+    }
+  ]
+};
+
 // export const fipAITeam: Team = {
 //   id: "fip-ai",
 //   name: "FIP AI Team",
@@ -534,5 +678,7 @@ export const allTeams = [
   financialRiskTeam,
   actuarialProjectionsTeam,
   memberRelationsTeam,
-  acapsComplianceTeam
+  acapsComplianceTeam,
+  financialAdvisoryTeam,
+  reclamationTeam
 ];

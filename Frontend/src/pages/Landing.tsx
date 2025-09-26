@@ -47,6 +47,18 @@ const teams = [
     name: "Conformité ACAPS", 
     icon: Shield, 
     description: "AI-powered regulatory compliance and reporting for pension fund management" 
+  },
+  { 
+    id: "financial_advisory", 
+    name: "Conseil Financier", 
+    icon: Shield, 
+    description: "AI-powered financial advisory, pension projections, and visualization services" 
+  },
+  { 
+    id: "reclamation", 
+    name: "Gestion des Réclamations", 
+    icon: Shield, 
+    description: "AI-powered claim processing, classification, and eligibility verification" 
   }
 ];
 

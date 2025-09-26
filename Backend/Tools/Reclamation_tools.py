@@ -61,7 +61,7 @@ def create_claim_record(claim_data: dict, raw_text: str = ""):
         
         # Generate unique claim ID if not provided
         if 'claim_id' not in claim_data or not claim_data['claim_id']:
-            claim_data['claim_id'] = f"CIMR-{str(uuid.uuid4())[:8].upper()}"
+            claim_data['claim_id'] = f"CIMR-{datetime.now().strftime('%Y%m%d%H%M%S')}"
         
         # Check for required fields
         required_fields = ['claim_type', 'confidence', 'next_action']

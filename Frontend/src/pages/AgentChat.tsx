@@ -82,7 +82,9 @@ const AgentChat = () => {
         'member_relations': 'member_relations',
         'financial_risk': 'financial_risk',
         'actuarial_projections': 'actuarial_projections',
-        'allocation_optimization': 'allocation_optimization'
+        'allocation_optimization': 'allocation_optimization',
+        'financial_advisory': 'financial_advisory',
+        'reclamation': 'reclamation'
       };
 
       const moduleName = moduleMapping[selectedAgent.teamId];
